@@ -11,16 +11,16 @@ let y = 400;
 let enemyx = 200
 let enemyy =  200
 
-let screenlimit = 512
+let screenlimit = 512;
 
 function setup() {
   createCanvas(screenlimit, screenlimit);
 }
 
 function draw(){
-  
-  clear();
 
+  clear();
+  background (10)  
   if (keyIsDown(LEFT_ARROW)) {
     x -= 5;
   }
@@ -35,5 +35,4 @@ function draw(){
 
   rect(enemyx, enemyy, 120, 40);
   fill(200,0,0);
-
 }
