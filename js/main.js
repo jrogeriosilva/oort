@@ -4,35 +4,68 @@
         Etapa 1
 */
 
-//Valores de posição inicial
-let x = 200;
-let y = 400;
-
-let enemyx = 200
-let enemyy =  200
+let enemmy; // Declarar Objetos
+let spaceship;
 
 let screenlimit = 512;
 
 function setup() {
   createCanvas(screenlimit, screenlimit);
+  // Criando Objetos
+  enemmy = new Fraco();
+  spaceship = new Actor();
 }
 
-function draw(){
+function draw() {
+  background(50, 89, 100);
+  enemmy.move();
+  enemmy.display();
 
-  clear();
-  background (10)  
-  if (keyIsDown(LEFT_ARROW)) {
-    x -= 5;
+  spaceship.move();
+  spaceship.display();
+
+}
+
+//Classe Inimigo Fraco 
+class Fraco {
+  constructor() {
+    this.x = random(width);
+    this.y = random(height);
+    this.diameter = random(15, 45);
+    this.speed = 0.8;
   }
 
-  if (keyIsDown(RIGHT_ARROW)) {
-    x += 5;
+  move() {
+    this.x += random(-this.speed, this.speed);
+    this.y += random(-this.speed, this.speed);
   }
 
+  display() {
+    rect(this.x, this.y, this.diameter, this.diameter);
+    fill (0,0,200)
+  }
+}
 
-  ellipse(x,y,25,25);
-  fill(0,0,200);
 
-  rect(enemyx, enemyy, 120, 40);
-  fill(200,0,0);
+//Classe do Protagonista
+class Actor{
+  constructor(){
+    this.x = 200;
+    this.y = 300;
+  }
+
+  move(){
+      if (keyIsDown(LEFT_ARROW)){
+        this.x -= 5
+      }
+
+      if (keyIsDown(RIGHT_ARROW)){
+        this.x +=5
+      }
+  }
+
+  display(){
+    ellipse(this.x, this.y,50,50)
+    fill(200,0,0)
+  }
 }
