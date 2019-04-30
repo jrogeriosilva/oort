@@ -17,10 +17,12 @@ function setup() {
 }
 
 function draw() {
-  background(50, 89, 100);
+  background(130, 130, 130);
+  //INIMIGOS
   enemmy.move();
   enemmy.display();
 
+  //NAVE
   spaceship.move();
   spaceship.display();
 
