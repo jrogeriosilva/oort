@@ -4,9 +4,9 @@
         Etapa 1
 */
 
-let enemmy; // Declarar Objetos
-let spaceship;
-
+let enemmy;
+let enemmy2;
+let character;
 
 //Variaveis de cenário
 let screenlimit = 512;
@@ -14,19 +14,21 @@ let screenlimit = 512;
 function setup() {
   createCanvas(screenlimit, screenlimit);
   // Criando Objetos
+  character = new Character();
   enemmy = new Fraco();
-  spaceship = new Actor();
 }
 
 function draw() {
   background(130, 130, 130);
+
+  //Atualizar Posição
   //INIMIGOS
   enemmy.move();
   enemmy.display();
 
-  //NAVE
-  spaceship.move();
-  spaceship.display();
+  //Personagem
+  character.move();
+  character.display();
 
 }
 
@@ -34,14 +36,14 @@ function draw() {
 class Fraco {
   constructor() {
     this.x = random(width);
-    this.y = random(height);
-    this.diameter = random(15, 45);
-    this.speed = 0.8;
+    this.y = 5;
+    this.diameter = random(15, 20);
+    this.speed = 2;
   }
 
   move() {
     this.x += random(-this.speed, this.speed);
-    this.y += random(-this.speed, this.speed);
+    this.y += random(-this.speed+2, this.speed+2);
   }
 
   display() {
@@ -52,24 +54,24 @@ class Fraco {
 
 
 //Classe do Protagonista
-class Actor{
+class Character{
   constructor(){
     this.x = 200;
     this.y = 300;
   }
 
   move(){
-      if (keyIsDown(LEFT_ARROW)){
+      if (keyIsDown(LEFT_ARROW) && this.x > 0){
         this.x -= 5
       }
 
-      if (keyIsDown(RIGHT_ARROW)){
+      if (keyIsDown(RIGHT_ARROW) && this.x < screenlimit){
         this.x +=5
       }
   }
 
   display(){
-    ellipse(this.x, this.y,50,50)
+    ellipse(this.x, this.y,25,25)
     fill(200,0,0)
   }
 }
