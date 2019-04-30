@@ -7,6 +7,8 @@
 let enemmy; // Declarar Objetos
 let spaceship;
 
+
+//Variaveis de cenário
 let screenlimit = 512;
 
 function setup() {
