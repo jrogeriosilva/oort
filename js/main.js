@@ -17,7 +17,7 @@ function setup() {
   createCanvas(canvasSize, canvasSize);
   // Criando Objetos
   character = new Character();
-  enemmy = new Fraco();
+  enemmy = new enemmyNv1();
   summon = new summonEnemmy();
 }
 
@@ -26,8 +26,8 @@ function draw() {
   objcsUpdate ()
 }
 
-//Classe Inimigo Fraco 
-class Fraco {
+//Classe Inimigo enemmyNv1 
+class enemmyNv1 {
   constructor() {
     this.x = random(width);
     this.y = 5;
@@ -52,7 +52,7 @@ class summonEnemmy {
 
   positionTest() {
     if (enemmy.y >= canvasSize) { 
-      enemmy = new Fraco();   
+      enemmy = new enemmyNv1();   
     }
   }
 }
