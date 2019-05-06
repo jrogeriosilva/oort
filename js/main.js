@@ -87,7 +87,6 @@ class ammoNv1 {
   }
 }
 
-
 //Cria um novo Inimigo caso o anterior tenha saído da tela
 //IMPLEMENTANDO PARA FUNCIONAR COM O ARRAY
 class summonEnemmy {
@@ -108,7 +107,7 @@ class summonEnemmy {
       this.y = character.y;
       this.diameter = 3;
       this.speed = 7;
-      console.log("Pew Pew")
+      console.log("Atirando")
     }
   
     move() {
@@ -186,4 +185,5 @@ function objcsUpdate(){
 // }
 
 
+//----FIM DO CÓDIGO----------
 }
