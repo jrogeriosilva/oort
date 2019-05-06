@@ -4,6 +4,11 @@
         Etapa 2
 */
 
+let img;
+function preload() {
+  img = loadImage("js/assets/spaceship_small_blue.png");
+}
+
 // let ammo; //Objeto que Define um Bonus
 let character;  //Objeto do Personagem
 //-----Ações
@@ -18,6 +23,7 @@ var enemmys = new Array(); //Array de Objetos que Grava Estado e Posição dos I
 var canvasSize = 512;
 
 function setup() {
+  console.log("Inicio");
   createCanvas(canvasSize, canvasSize);
   // Criando Objetos
   // shoot = new Shoot();
@@ -35,7 +41,7 @@ function setup() {
 
 function draw() {
   background(0, 0, 0);
-  objcsUpdate ()
+  objcsUpdate ();
 }
 
 //Classe Inimigo enemmyNv1 
@@ -55,7 +61,7 @@ class enemmyNv1 {
 
   display() {
     rect(this.x, this.y, this.diameter, this.diameter);
-    fill (0,0,200)
+    fill (0,0,200);
     
   }
 }
@@ -69,14 +75,14 @@ class ammoNv1 {
   }
 
   move() {
-    this.x += random(0.05*this.y, -0.05*this.y)
-    this.y += 2.5 + random (-5,1)
+    this.x += random(0.05*this.y, -0.05*this.y);
+    this.y += 2.5 + random (-5,1);
     summon.positionTest();
   }
 
   display() {
     ellipse(this.x, this.y, this.diameter, this.diameter);
-    fill (0,150,200)
+    fill (0,150,200);
     
   }
 }
@@ -100,17 +106,19 @@ class summonEnemmy {
     constructor() {
       this.x = character.x;
       this.y = character.y;
-      this.diameter = 3
+      this.diameter = 3;
       this.speed = 7;
+      console.log("Pew Pew")
     }
   
     move() {
-      this.y -= this.speed
+      this.y -= this.speed;
     }
   
     display() {
-      fill (255,255,50)
-      ellipse(this.x, this.y, this.diameter, this.diameter+2);
+      fill (255,255,50);
+      ellipse(this.x+7, this.y -15, this.diameter, this.diameter+2);
+      ellipse(this.x-7, this.y -15, this.diameter, this.diameter+2);
  
     }
   } 
@@ -124,22 +132,22 @@ class Character{
  
   move(){
       if (keyIsDown(LEFT_ARROW) && this.x > 0){
-        this.x -= 5
+        this.x -= 5;
       }
 
       if (keyIsDown(RIGHT_ARROW) && this.x < canvasSize){
-        this.x +=5
+        this.x +=5;
       }
       if (keyIsDown(DOWN_ARROW)){
         shoot = new Shoot();
         shoting = true;
-        console.log('PEW')
+        console.log('PEW');
       }
   }
 
   display(){
-    ellipse(this.x, this.y,25,25)
-    fill(250,0,0) 
+    imageMode(CENTER);
+    image (img, character.x, character.y); 
   }
 }
 
