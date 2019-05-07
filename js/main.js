@@ -58,10 +58,16 @@ function setup() {
   //---FIM DA CONFIGURAÇAO
 }
 
+let fire = false;
 function draw() {
   background(0, 0, 0);
-  objcsUpdate ();
-  // menu.show();
+  objcsUpdate ();  
+}
+
+function keyPressed() {
+  if (keyCode === 90) {
+    fire = true;
+  } 
 }
 
 class Menu{
@@ -166,8 +172,10 @@ class Character{
     if (keyIsDown(RIGHT_ARROW) && this.x < canvasSize){
       this.x += this.speed;
     }
-    if (keyIsDown(DOWN_ARROW)){
+    if (fire == true){
       shoot.push(new Shoot());
+      fire = false
+      
     }
   }
 
