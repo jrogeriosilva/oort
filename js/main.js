@@ -3,14 +3,23 @@
         José Rogério da Silva Júnior - Subturma 01C (Líder) 
         Etapa 2
 */
-
-let img;
-function preload() {
-  img = loadImage("js/assets/spaceship_small_blue.png");
+let imgLife;
+function preload(){
+  imgLife = loadImage("assets/heart.png")
 }
 
+let imgCharacter;
+function preload() {
+  imgCharacter = loadImage("assets/spaceship_small_blue.png");
+}
+
+let menu
+
 // let ammo; //Objeto que Define um Bonus
-let character;  //Objeto do Personagem
+let character;
+
+
+
 //-----Ações
 let summon; //Metodo de Invocação
 var shoot;
@@ -27,25 +36,40 @@ function setup() {
   createCanvas(canvasSize, canvasSize);
   // Criando Objetos
   // shoot = new Shoot();
+ 
+  //Criando objeto do personagem
   character = new Character();
   // ammo = new ammoNv1(); // Objeto de Bonus
- 
-  //Insere os Inimigos no Array
+  
+  //Criando objetos e os Inserindo no Array
   for(i=0;i<enemmyNumber;i++){
-    enemmys.push(new enemmyNv1());
+    enemmys.push(new EnemmyN1());
   }
-
-// Nova Ivocação  
+  
+// Objeto de Invocação  
   summon = new summonEnemmy();
+
+  //Objeto do Menu
+  menu = new Menu();
+  
+  //---FIM DA CONFIGURAÇAO
 }
 
 function draw() {
   background(0, 0, 0);
   objcsUpdate ();
+  // menu.show();
 }
 
-//Classe Inimigo enemmyNv1 
-class enemmyNv1 {
+class Menu{
+  show(){
+    // imageMode(CENTER);
+    // image (imgLife, 50, 70);   
+  }
+}
+
+//Classe Inimigo EnemmyN1 
+class EnemmyN1 {
   constructor() {
     this.x = random(width);
     this.y = random(-100,5);
@@ -125,28 +149,27 @@ class summonEnemmy {
 //Classe do Protagonista
 class Character{
   constructor(){
-    this.x = 200;
-    this.y = 400;
+    this.x = width/2;
+    this.y = height-90;
+    this.speed = 3
   }
  
   move(){
       if (keyIsDown(LEFT_ARROW) && this.x > 0){
-        this.x -= 5;
+        this.x -= this.speed;
       }
 
       if (keyIsDown(RIGHT_ARROW) && this.x < canvasSize){
-        this.x +=5;
+        this.x += this.speed;
       }
       if (keyIsDown(DOWN_ARROW)){
         shoot = new Shoot();
-        shoting = true;
-        console.log('PEW');
       }
   }
 
   display(){
     imageMode(CENTER);
-    image (img, character.x, character.y); 
+    image (imgCharacter, character.x, character.y); 
   }
 }
 
@@ -178,7 +201,26 @@ function objcsUpdate(){
     }
   }
 
-//Atualiza a Posição de Todos os Tiros
+
+  //HUD
+
+  fill(255,255,255)
+  textFont('Helvetica');
+  textSize(14);
+  
+  text("00000000", width/2-30, 15)
+
+  text("Nível: ", width-70, 15)
+
+  textSize(14);
+  text("Vidas", 20, 460);
+  
+  imageMode(CENTER);
+  image (imgCharacter, 20, 490,32,32); 
+  image (imgCharacter, 60, 490,32,32);
+  image (imgCharacter, 100, 490,32,32);
+
+  //Atualiza a Posição de Todos os Tiros
 // for (i=0;i < shoot.length;i++){
 //   shoot[i].move();
 //   shoot[i].display();
