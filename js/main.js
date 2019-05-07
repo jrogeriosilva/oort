@@ -3,6 +3,7 @@
         José Rogério da Silva Júnior - Subturma 01C (Líder) 
         Etapa 2
 */
+
 let imgLife;
 function preload(){
   imgLife = loadImage("assets/heart.png")
@@ -242,7 +243,6 @@ function objcsUpdate(){
 
 
 //----FIM DO CÓDIGO----------
-
 
 
 }
