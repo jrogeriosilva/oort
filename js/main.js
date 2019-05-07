@@ -22,11 +22,13 @@ let character;
 
 //-----Ações
 let summon; //Metodo de Invocação
-var shoot;
+
 var shoting = false;
 
 let enemmyNumber = 5; // Inimigos no Mapa
 var enemmys = new Array(); //Array de Objetos que Grava Estado e Posição dos Inimigos
+
+var shoot = new Array(); //Array de Objetos que Grava os Tiros
 
 //-----Variaveis de cenário
 var canvasSize = 512;
@@ -73,8 +75,8 @@ class EnemmyN1 {
   constructor() {
     this.x = random(width);
     this.y = random(-100,5);
-    this.diameter = random(10, 20);
-    this.speed = random(1,3) / this. diameter;
+    this.diameter = random(10, 30);
+    this.speed = random(1,2) / this. diameter;
   }
 
   move() {
@@ -132,6 +134,7 @@ class summonEnemmy {
       this.diameter = 3;
       this.speed = 7;
       console.log("Atirando")
+      
     }
   
     move() {
@@ -155,16 +158,16 @@ class Character{
   }
  
   move(){
-      if (keyIsDown(LEFT_ARROW) && this.x > 0){
-        this.x -= this.speed;
+    if (keyIsDown(LEFT_ARROW) && this.x > 0){
+      this.x -= this.speed;
       }
 
-      if (keyIsDown(RIGHT_ARROW) && this.x < canvasSize){
-        this.x += this.speed;
-      }
-      if (keyIsDown(DOWN_ARROW)){
-        shoot = new Shoot();
-      }
+    if (keyIsDown(RIGHT_ARROW) && this.x < canvasSize){
+      this.x += this.speed;
+    }
+    if (keyIsDown(DOWN_ARROW)){
+      shoot.push(new Shoot());
+    }
   }
 
   display(){
@@ -188,9 +191,11 @@ function objcsUpdate(){
     character.display();
   }
   //---Tiro
-  if (typeof shoot !== 'undefined'){
-  shoot.move();
-  shoot.display();
+  if (typeof shoot !== 'undefined' && shoot.length>0){
+    for (i=0; i < shoot.length;i++){
+      shoot[i].move();
+      shoot[i].display();
+    }
   }
 
  //Atualiza a Posição de Todos os Inimigos
@@ -227,5 +232,17 @@ function objcsUpdate(){
 // }
 
 
+// CONTROLE UNICO DE TIROS
+// function keyPressed(){
+//   if (keyCode === UP_ARROW) {
+//     shoot.push(new Shoot());
+//     console.log("Pew")
+//     }
+//   }
+
+
 //----FIM DO CÓDIGO----------
+
+
+
 }
