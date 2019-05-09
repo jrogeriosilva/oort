@@ -4,7 +4,7 @@
         Etapa 2
 */
 
-//-----Cenário
+//Cenário
 var canvasSize = 512;
 
 let imgLife;
@@ -12,7 +12,6 @@ function preload() {
   imgLife = loadImage("assets/heart.png")
 }
 
-let shoting = false;
 let character;
 let imgCharacter;
 function preload() {
@@ -39,18 +38,23 @@ function setup() {
   //Invocação  
   summon = new summonEnemmy();
 
-  //---FIM DA CONFIGURAÇAO
+  //FIM DA CONFIGURAÇAO
 }
+
+delayShot = false
 
 function draw() {
   background(0, 0, 0);
   objcsUpdate();
 }
 
-function keyPressed() {
-  if (keyCode === 90) {
-    shoting = true;
-  }
+function Delay(t) {
+setTimeout(
+  () => {
+    delayShot = false
+  },
+  t * 100
+);
 }
 
 //EnemmyN1 
@@ -134,12 +138,16 @@ class Shoot {
 //Classe do Protagonista
 class Character {
   constructor() {
+    this.shootingSpeed = 7
     this.x = width / 2;
     this.y = height - 90;
     this.speed = 3
   }
 
   move() {
+ 
+ 
+    //Controles
     if (keyIsDown(LEFT_ARROW) && this.x > 20) {
       this.x -= this.speed;
     }
@@ -147,10 +155,12 @@ class Character {
     if (keyIsDown(RIGHT_ARROW) && this.x < canvasSize - 20) {
       this.x += this.speed;
     }
-    if (shoting == true) {
-      shoot.push(new Shoot());
-      shoting = false
 
+    //Tiro simples
+    if (keyIsDown(90) && delayShot === false) {
+      shoot.push(new Shoot());
+      delayShot = true
+      Delay(character.shootingSpeed);
     }
   }
 
@@ -158,6 +168,7 @@ class Character {
     imageMode(CENTER);
     image(imgCharacter, character.x, character.y);
   }
+  
 }
 
 function objcsUpdate() {
