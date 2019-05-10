@@ -17,12 +17,12 @@ let imgCharacter;
 function preload() {
   imgCharacter = loadImage("assets/spaceship_small_blue.png");
 }
+var shoot = new Array(); //Array de Objetos que Grava os Tiros
+delayShot = false;
 
 let summon; //Objeto de Invocação
 let enemmyNumber = 8; // Inimigos no Mapa
-
 var enemmys = new Array(); //Array de Objetos que Grava Estado e Posição dos Inimigos
-var shoot = new Array(); //Array de Objetos que Grava os Tiros
 
 function setup() {
   createCanvas(canvasSize, canvasSize);
@@ -41,13 +41,12 @@ function setup() {
   //FIM DA CONFIGURAÇAO
 }
 
-delayShot = false
-
 function draw() {
   background(0, 0, 0);
   objcsUpdate();
 }
 
+//Cooldown
 function Delay(t) {
 setTimeout(
   () => {
@@ -157,7 +156,7 @@ class Character {
     }
 
     //Tiro simples
-    if (keyIsDown(90) && delayShot === false) {
+    if (keyIsDown(32) && delayShot === false) {
       shoot.push(new Shoot());
       delayShot = true
       Delay(character.shootingSpeed);
