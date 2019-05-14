@@ -3,7 +3,7 @@ var bgImg;
 var x1 = 0;
 var x2;
 
-var scrollSpeed = 1;
+var scrollSpeed = 4;
 
 function preload(){
 	bgImg = loadImage("assets/bg2.png");

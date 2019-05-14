@@ -5,28 +5,57 @@
 */
 
 //Cenário
+
+//BG
+var bgImg;
+var y1 = 0;
+var y2
+var scrollSpeed = 4;
+
+function showBg(){
+    //---Background
+    imageMode(CORNER)
+    image(bgImg, 0, -y1, canvasSize, canvasSize);
+    image(bgImg, 0, -y2, canvasSize, canvasSize);
+
+    
+    y1 -= scrollSpeed;
+    y2 -= scrollSpeed;
+
+    if (y1 < canvasSize){
+      y1 = canvasSize;
+    }
+    if (y2 < -canvasSize){
+      y2 = -canvasSize;
+    }
+}
+
+
+
+
+
 var canvasSize = 512;
 
 let imgLife;
-function preload() {
-  imgLife = loadImage("assets/heart.png")
-}
 
 let character;
 let imgCharacter;
 function preload() {
   imgCharacter = loadImage("assets/spaceship_small_blue.png");
+  imgLife = loadImage("assets/heart.png")
+  bgImg = loadImage("assets/bg.png");
+  
 }
 var shoot = new Array(); //Array de Objetos que Grava os Tiros
 delayShot = false;
 
 let summon; //Objeto de Invocação
-let enemmyNumber = 8; // Inimigos no Mapa
+let enemmyNumber = 2; // Inimigos no Mapa
 var enemmys = new Array(); //Array de Objetos que Grava Estado e Posição dos Inimigos
 
 function setup() {
   createCanvas(canvasSize, canvasSize);
-
+  y2 = width;
   //Personagem
   character = new Character();
 
@@ -42,7 +71,8 @@ function setup() {
 }
 
 function draw() {
-  background(0, 0, 0);
+  clear();
+  showBg()
   objcsUpdate();
 }
 
@@ -69,12 +99,11 @@ class EnemmyN1 {
     this.x += random(-this.speed, this.speed);
     this.y += random(this.speed * 3, this.speed * 3);
     summon.positionTest();
+    fill(0, 0, 255);
   }
 
   display() {
     rect(this.x, this.y, this.diameter, this.diameter);
-    fill(0, 0, 200);
-
   }
 }
 
@@ -141,17 +170,26 @@ class Character {
     this.x = width / 2;
     this.y = height - 90;
     this.speed = 3
+    this.diameter = 15
   }
 
   move() {
  
  
     //Controles
+      if (keyIsDown(UP_ARROW) && this.y > 20) {
+      this.y -= 1;
+    }
+
+    else if (keyIsDown(DOWN_ARROW) && this.y < canvasSize - 20) {
+      this.y += this.speed;
+    }
+
     if (keyIsDown(LEFT_ARROW) && this.x > 20) {
       this.x -= this.speed;
     }
 
-    if (keyIsDown(RIGHT_ARROW) && this.x < canvasSize - 20) {
+    else if (keyIsDown(RIGHT_ARROW) && this.x < canvasSize - 20) {
       this.x += this.speed;
     }
 
@@ -166,13 +204,15 @@ class Character {
   display() {
     imageMode(CENTER);
     image(imgCharacter, character.x, character.y);
+    rectMode(CENTER)
+    rect(this.x, this.y, this.diameter, this.diameter);
   }
   
 }
 
 function objcsUpdate() {
-  //------Atualizar Posições dos Objetos
 
+//------Atualizar Posições dos Objetos
   //-----Bonus
   if (typeof ammo !== 'undefined') {
     ammo.move();
@@ -213,12 +253,25 @@ function objcsUpdate() {
   text("Vidas", 20, 460);
 
   imageMode(CENTER);
-  image(imgCharacter, 20, 490, 32, 32);
-  image(imgCharacter, 60, 490, 32, 32);
-  image(imgCharacter, 100, 490, 32, 32);
+  image(imgLife, 20, 490, 32, 32);
+  image(imgLife, 60, 490, 32, 32);
+  image(imgLife, 100, 490, 32, 32);
+
 
   
-  //----FIM DO CÓDIGO----------
+//Sistema de Colisões 1.0
 
+  for(i=0;i < enemmys.length; i++){
+    var a = enemmys[i].x - character.x
+    var b = enemmys[i].y - character.y
+    var c = Math.sqrt((a*a) + (b*b))
+
+    surface = character.diameter + enemmys[i].diameter
+    if (c <= surface) {
+      console.log ("Colisão Detectada")
+    }
+  }
+
+  //----FIM DO CÓDIGO----------
 
 }
