@@ -10,28 +10,27 @@
 var bgImg;
 var y1 = 0;
 var y2
-var scrollSpeed = 4;
+var scrollSpeed = 1;
 
 function showBg(){
     //---Background
     imageMode(CORNER)
-    image(bgImg, 0, -y1, canvasSize, canvasSize);
+    image(bgImg, 0, -y1, canvasSize, canvasSize+18);
     image(bgImg, 0, -y2, canvasSize, canvasSize);
 
     
     y1 -= scrollSpeed;
     y2 -= scrollSpeed;
 
-    if (y1 < canvasSize){
+    if (y1 < -canvasSize){
       y1 = canvasSize;
+      console.log("y1")
     }
     if (y2 < -canvasSize){
-      y2 = -canvasSize;
+      y2 = canvasSize;
+      console.log("y2")
     }
 }
-
-
-
 
 
 var canvasSize = 512;
@@ -50,12 +49,12 @@ var shoot = new Array(); //Array de Objetos que Grava os Tiros
 delayShot = false;
 
 let summon; //Objeto de Invocação
-let enemmyNumber = 2; // Inimigos no Mapa
+let enemmyNumber = 5; // Inimigos no Mapa
 var enemmys = new Array(); //Array de Objetos que Grava Estado e Posição dos Inimigos
 
 function setup() {
   createCanvas(canvasSize, canvasSize);
-  y2 = width;
+  y2 = canvasSize;
   //Personagem
   character = new Character();
 
@@ -90,14 +89,15 @@ setTimeout(
 class EnemmyN1 {
   constructor() {
     this.x = random(width);
-    this.y = random(-100, 5);
+    this.y = random(5, 5);
     this.diameter = random(10, 30);
-    this.speed = random(1, 2) / this.diameter;
+    this.vSpeed = character.y / 100
+    this.speed = random(4, 5) / this.diameter;
   }
 
   move() {
     this.x += random(-this.speed, this.speed);
-    this.y += random(this.speed * 3, this.speed * 3);
+    this.y += random(this.vSpeed + this.speed * 3, this.speed * 3 );
     summon.positionTest();
     fill(0, 0, 255);
   }
@@ -147,7 +147,7 @@ class Shoot {
     this.x = character.x;
     this.y = character.y;
     this.diameter = 3;
-    this.speed = 7;
+    this.speed = 2;
     console.log("Atirando")
 
   }
@@ -161,11 +161,13 @@ class Shoot {
     ellipse(this.x + 7, this.y - 15, this.diameter, this.diameter + 2);
     ellipse(this.x - 7, this.y - 15, this.diameter, this.diameter + 2);
   }
+
 }
 
 //Classe do Protagonista
 class Character {
   constructor() {
+    this.life = 3
     this.shootingSpeed = 7
     this.x = width / 2;
     this.y = height - 90;
@@ -178,7 +180,7 @@ class Character {
  
     //Controles
       if (keyIsDown(UP_ARROW) && this.y > 20) {
-      this.y -= 1;
+      this.y -= this.speed;
     }
 
     else if (keyIsDown(DOWN_ARROW) && this.y < canvasSize - 20) {
@@ -207,6 +209,10 @@ class Character {
     rectMode(CENTER)
     rect(this.x, this.y, this.diameter, this.diameter);
   }
+
+  setLife(x){
+    this.life += x
+  }
   
 }
 
@@ -229,6 +235,14 @@ function objcsUpdate() {
     for (i = 0; i < shoot.length; i++) {
       shoot[i].move();
       shoot[i].display();
+      
+      console.log("Y: "+ shoot[i].y)
+      if (shoot[i].y < 0){
+        shoot.splice(i, 1); 
+        i--;
+      }
+      
+
     }
   }
 
@@ -250,16 +264,13 @@ function objcsUpdate() {
   text("Nível: ", width - 70, 15)
 
   textSize(14);
-  text("Vidas", 20, 460);
+  text("Vidas", 20, height - 50);
 
   imageMode(CENTER);
-  image(imgLife, 20, 490, 32, 32);
-  image(imgLife, 60, 490, 32, 32);
-  image(imgLife, 100, 490, 32, 32);
-
+  text(character.life, 20, height - 30);
 
   
-//Sistema de Colisões 1.0
+//Sistema de Colisões JOGADOR-IMIGO
 
   for(i=0;i < enemmys.length; i++){
     var a = enemmys[i].x - character.x
@@ -269,6 +280,22 @@ function objcsUpdate() {
     surface = character.diameter + enemmys[i].diameter
     if (c <= surface) {
       console.log ("Colisão Detectada")
+    }
+  }
+
+//Sistema de Colisões INIMIGO-TIRO (BETA)
+//j?
+  for(i=0;i < shoot.length; i++){
+    for (j=0; j < enemmys.length; j++){
+      var a = enemmys[i].x - shoot[i].x
+      var b = enemmys[i].y - shoot[i].y
+      var c = Math.sqrt((a*a) + (b*b))
+
+      surface = shoot[i].diameter + enemmys[i].diameter
+      if (c <= surface) {
+        console.log ("Colisão de Tiro Detectada")
+        Character.setLife(1)
+      }
     }
   }
 
