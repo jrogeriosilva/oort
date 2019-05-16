@@ -123,7 +123,6 @@ class ammoNv1 {
 	display() {
 		ellipse(this.x, this.y, this.diameter, this.diameter);
 		fill(0, 150, 200);
-
 	}
 }
 
@@ -171,30 +170,32 @@ class Character {
 		this.y = height - 90;
 		this.speed = 3
 		this.diameter = 15
+		this.points = 0
 	}
 
 	move() {
 
 
 //Controles
-if (keyIsDown(UP_ARROW) && this.y > 20) {
-	this.y -= this.speed;
+//CIMA
+if (keyIsDown(87) && this.y > 20) {
+	this.y -= 0.5;
 }
 
-else if (keyIsDown(DOWN_ARROW) && this.y < canvasSize - 20) {
+else if (keyIsDown(83) && this.y < canvasSize - 20) {
 	this.y += this.speed;
 }
 
-if (keyIsDown(LEFT_ARROW) && this.x > 20) {
+if (keyIsDown(65) && this.x > 20) {
 	this.x -= this.speed;
 }
 
-else if (keyIsDown(RIGHT_ARROW) && this.x < canvasSize - 20) {
+else if (keyIsDown(68) && this.x < canvasSize - 20) {
 	this.x += this.speed;
 }
 
 //Tiro simples
-if (keyIsDown(32) && delayShot === false) {
+if (keyIsDown(75) && delayShot === false) {
 	shoot.push(new Shoot());
 	delayShot = true
 	Delay(character.shootingSpeed);
@@ -210,6 +211,10 @@ display() {
 
 setLife(x){
 	this.life += x
+}
+
+setPoints(){
+	this.points += 1
 }
 
 }
@@ -237,7 +242,7 @@ if (typeof shoot !== 'undefined' && shoot.length > 0) {
 		console.log("Y: "+ shoot[i].y)
 		if (shoot[i].y < 0){
 			shoot.splice(i, 1); 
-			i--;
+			i--;			
 		}
 
 
@@ -257,7 +262,7 @@ fill(255, 255, 255)
 textFont('Helvetica');
 textSize(14);
 
-text("00000000", width / 2 - 30, 15)
+text(character.points, width / 2 - 30, 15)
 
 text("Nível: ", width - 70, 15)
 
@@ -282,17 +287,17 @@ for(i=0;i < enemmys.length; i++){
 }
 
 //Sistema de Colisões INIMIGO-TIRO (BETA)
-//j?
+
 for(i=0;i < shoot.length; i++){
 	for (j=0; j < enemmys.length; j++){
-		var a = enemmys[i].x - shoot[i].x
-		var b = enemmys[i].y - shoot[i].y
+		var a = enemmys[j].x - shoot[i].x
+		var b = enemmys[j].y - shoot[i].y
 		var c = Math.sqrt((a*a) + (b*b))
 
-		surface = shoot[i].diameter + enemmys[i].diameter
+		surface = shoot[i].diameter + enemmys[j].diameter
 		if (c <= surface) {
 			console.log ("Colisão de Tiro Detectada")
-			Character.setLife(1)
+			character.setPoints()
 		}
 	}
 }
