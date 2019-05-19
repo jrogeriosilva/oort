@@ -1,9 +1,8 @@
 /* 
-Equipe: 
-José Rogério da Silva Júnior - Subturma 01C (Líder) 
-Etapa 2
+	Equipe: 
+	José Rogério da Silva Júnior - Subturma 01C (Líder) 
+	Etapa 2
 */
-/*jshint esversion: 6 */
 
 //Cenário
 
@@ -11,26 +10,22 @@ Etapa 2
 var bgImg;
 var y1 = 0;
 var y2;
-var scrollSpeed = 0.5;
+var scrollSpeed = 0.1;
 
 //---Background
 function showBg(){
 	imageMode(CORNER);
-	image(bgImg, 0, -y1, canvasSize, canvasSize+30);
+	image(bgImg, 0, -y1, canvasSize, canvasSize);
 	image(bgImg, 0, -y2, canvasSize, canvasSize);
 
-	
-
-	y1 -= scrollSpeed / (character.y/1500);
-	y2 -= scrollSpeed / (character.y/1500);
+	y1 -= scrollSpeed * (canvasSize - character.y)
+	y2 -= scrollSpeed * (canvasSize - character.y)
 
 	if (y1 < -canvasSize){
 		y1 = canvasSize;
-		console.log("y1");
 	}
 	if (y2 < -canvasSize){
 		y2 = canvasSize;
-		console.log("y2");
 	}
 }
 
@@ -40,16 +35,17 @@ var imgLife;
 var character;
 var imgCharacter;
 function preload() {
-	imgCharacter = loadImage("assets/spaceship_small_blue.png");
-	imgLife = loadImage("assets/heart.png");
-	bgImg = loadImage("assets/bg.png");
+
+	// imgCharacter = loadImage("assets/spaceship_small_blue.png");
+	// imgLife = loadImage("assets/heart.png");
+	// bgImg = loadImage("assets/bg.png");
 
 }
 var shoot = new Array(); //Array de Objetos que Grava os Tiros
 delayShot = false;
 
 var summon; //Objeto de Invocação
-var enemmyNumber = 5; // Inimigos no Mapa
+var enemmyNumber = 8; // Inimigos no Mapa
 var enemmys = new Array(); //Array de Objetos que Grava Estado e Posição dos Inimigos
 
 function setup() {
@@ -71,7 +67,7 @@ summon = new summonEnemmy();
 
 function draw() {
 	clear();
-	showBg();
+	// showBg();
 	objcsUpdate();
 }
 
@@ -89,21 +85,27 @@ function Delay(t) {
 class EnemmyN1 {
 	constructor() {
 		this.x = random(width);
-		this.y = random(5, 5);
-		this.diameter = random(10, 30);
+		this.y = random(-2000, 5);
+		this.diameter = random(20, 50);
 		this.vSpeed = character.y / 100;
-		this.speed = random(4, 5) / this.diameter;
+		this.speed = random(10, 15) / this.diameter;
+		
 	}
 
 	move() {
-		this.x += random(-this.speed, this.speed);
-		this.y += random(this.vSpeed + this.speed * 3, this.speed * 3 );
+		this.x += random(1);
+		this.y += this.speed * 8
 		summon.positionTest();
-		fill(0, 0, 255);
 	}
 
 	display() {
-		rect(this.x, this.y, this.diameter, this.diameter);
+		fill(200, 0, 0);
+		ellipseMode(CENTER)
+		ellipse(this.x, this.y, this.diameter, this.diameter);
+		fill(0)
+		textSize(12);
+		text('1', this.x, this.y+5);
+		
 	}
 }
 
@@ -132,23 +134,21 @@ class ammoNv1 {
 class summonEnemmy {
 
 	positionTest() {
+		// for (i = 0; enemmys[i]< enemmys.length; i++){
+		// 	if (enemmys.y >= canvasSize){
+		// 		console.log(enemmys[i]+ 'Saiu')
+		// 	}
+		// }
 	}
 
-// for (i = 0; enemmys[i]< enemmys.length; i++){
-///   if (enemmy[i].y >= canvasSize){
-//     console.log(enemmys[i]+ 'Saiu')
-//   }
-// }
 }
 
 class Shoot {
 	constructor() {
 		this.x = character.x;
 		this.y = character.y;
-		this.diameter = 3;
-		this.speed = 2;
-		console.log("Atirando");
-
+		this.diameter = 15;
+		this.speed = 5;
 	}
 
 	move() {
@@ -156,9 +156,12 @@ class Shoot {
 	}
 
 	display() {
-		fill(255, 255, 50);
-		ellipse(this.x + 7, this.y - 15, this.diameter, this.diameter + 2);
-		ellipse(this.x - 7, this.y - 15, this.diameter, this.diameter + 2);
+		fill(255)
+		ellipse(this.x, this.y, this.diameter, this.diameter)
+		textAlign(CENTER)
+		textSize(12);
+		fill(0, 0, 0);
+		text('1', this.x, this.y+5);
 	}
 
 }
@@ -166,10 +169,10 @@ class Shoot {
 //Classe do Protagonista
 class Character {
 	constructor() {
-		this.life = 3;
+		this.life = 1;
 		this.shootingSpeed = 7;
 		this.x = width / 2;
-		this.y = height - 90;
+		this.y = height - 60;
 		this.speed = 3;
 		this.diameter = 15;
 		this.points = 0;
@@ -181,7 +184,7 @@ class Character {
 //Controles
 //CIMA
 if (keyIsDown(87) && this.y > 20) {
-	this.y -= 0.5;
+	this.y -= this.speed;
 }
 
 else if (keyIsDown(83) && this.y < canvasSize - 20) {
@@ -197,7 +200,7 @@ else if (keyIsDown(68) && this.x < canvasSize - 20) {
 }
 
 //Tiro simples
-if (keyIsDown(75) && delayShot === false) {
+if (keyIsDown(32) && delayShot === false) {
 	shoot.push(new Shoot());
 	delayShot = true;
 	Delay(character.shootingSpeed);
@@ -205,18 +208,24 @@ if (keyIsDown(75) && delayShot === false) {
 }
 
 display() {
-	imageMode(CENTER);
-	image(imgCharacter, character.x, character.y);
-	rectMode(CENTER);
-	rect(this.x, this.y, this.diameter, this.diameter);
+		// imageMode(CENTER);
+		// image(imgCharacter, character.x, character.y);
+	// rectMode(CENTER);
+	fill(255, 255, 255);
+	ellipse(this.x, this.y, this.diameter, this.diameter)
+	fill(0)
+	textAlign(CENTER)
+	textSize(12);
+	text('1', this.x, this.y+5);
+
 }
 
 setLife(x){
 	this.life += x;
 }
 
-setPoints(){
-	this.points += 1;
+setPoints(x){
+	this.points += x;
 }
 
 }
@@ -241,12 +250,11 @@ if (typeof shoot !== 'undefined' && shoot.length > 0) {
 		shoot[i].move();
 		shoot[i].display();
 
-		console.log("Y: "+ shoot[i].y);
+		//Verificar se o Tiro Saiu da Tela e o apaga do Array de objetos
 		if (shoot[i].y < 0){
 			shoot.splice(i, 1); 
-			i--;			
+			i--;		
 		}
-
 
 	}
 }
@@ -264,15 +272,19 @@ fill(255, 255, 255);
 textFont('Helvetica');
 textSize(14);
 
-text(character.points, width / 2 - 30, 15);
+fill(0, 0, 0);
+text("Pontos: "+ character.points, width / 2 - 30, 15);
 
-text("Nível: ", width - 70, 15);
+fill(0, 0, 0);
+text("Nível: 1", width - 70, 15);
 
-textSize(14);
-text("Vidas", 20, height - 50);
 
 imageMode(CENTER);
-text(character.life, 20, height - 30);
+textSize(14);
+fill(0, 0, 0);
+text("Bits", 30, height - 40);
+text(character.life, 30, height - 20);
+
 
 
 //Sistema de Colisões JOGADOR-IMIGO
@@ -283,8 +295,9 @@ for(i=0;i < enemmys.length; i++){
 	var c = Math.sqrt((a*a) + (b*b));
 
 	surface = character.diameter + enemmys[i].diameter;
-	if (c <= surface) {
-		console.log ("Colisão Detectada");
+	if (c <= surface/2) {
+		console.log ("Game Over");
+		document.location.reload()
 	}
 }
 
@@ -292,18 +305,21 @@ for(i=0;i < enemmys.length; i++){
 
 for(i=0;i < shoot.length; i++){
 	for (j=0; j < enemmys.length; j++){
+
 		var xDistance = enemmys[j].x - shoot[i].x;
 		var yDistance = enemmys[j].y - shoot[i].y;
 		var diagonalDistance = Math.sqrt((xDistance*xDistance) + (yDistance*yDistance));
 
 		surface = shoot[i].diameter + enemmys[j].diameter;
-		if (diagonalDistance <= surface) {
-			console.log ("Colisão de Tiro Detectada");
-			character.setPoints();
+		if (diagonalDistance <= surface/2) {
+			console.log ("Acertou um Inimigo");
+			character.setPoints(100);
+			enemmys.splice(j, 1);
+			j--;
 		}
 	}
+	
 }
-
 //----FIM DO CÓDIGO----------
 
 }
