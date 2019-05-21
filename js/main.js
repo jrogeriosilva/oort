@@ -18,8 +18,8 @@ function showBg(){
 	image(bgImg, 0, -y1, canvasSize, canvasSize);
 	image(bgImg, 0, -y2, canvasSize, canvasSize);
 
-	y1 -= scrollSpeed * (canvasSize - character.y)
-	y2 -= scrollSpeed * (canvasSize - character.y)
+	y1 -= scrollSpeed * (canvasSize - character.y);
+	y2 -= scrollSpeed * (canvasSize - character.y);
 
 	if (y1 < -canvasSize){
 		y1 = canvasSize;
@@ -94,15 +94,15 @@ class EnemmyN1 {
 
 	move() {
 		this.x += random(1);
-		this.y += this.speed * 8
+		this.y += this.speed * 8;
 		summon.positionTest();
 	}
 
 	display() {
 		fill(200, 0, 0);
-		ellipseMode(CENTER)
+		ellipseMode(CENTER);
 		ellipse(this.x, this.y, this.diameter, this.diameter);
-		fill(0)
+		fill(0);
 		textSize(12);
 		text('1', this.x, this.y+5);
 		
@@ -156,9 +156,9 @@ class Shoot {
 	}
 
 	display() {
-		fill(255)
-		ellipse(this.x, this.y, this.diameter, this.diameter)
-		textAlign(CENTER)
+		fill(255);
+		ellipse(this.x, this.y, this.diameter, this.diameter);
+		textAlign(CENTER);
 		textSize(12);
 		fill(0, 0, 0);
 		text('1', this.x, this.y+5);
@@ -212,9 +212,9 @@ display() {
 		// image(imgCharacter, character.x, character.y);
 	// rectMode(CENTER);
 	fill(255, 255, 255);
-	ellipse(this.x, this.y, this.diameter, this.diameter)
-	fill(0)
-	textAlign(CENTER)
+	ellipse(this.x, this.y, this.diameter, this.diameter);
+	fill(0);
+	textAlign(CENTER);
 	textSize(12);
 	text('1', this.x, this.y+5);
 
@@ -297,7 +297,7 @@ for(i=0;i < enemmys.length; i++){
 	surface = character.diameter + enemmys[i].diameter;
 	if (c <= surface/2) {
 		console.log ("Game Over");
-		document.location.reload()
+		document.location.reload();
 	}
 }
 
