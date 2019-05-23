@@ -1,144 +1,98 @@
 /* 
-	Equipe: 
-	José Rogério da Silva Júnior - Subturma 01C (Líder) 
-	Etapa 2
+    Equipe: 
+    José Rogério da Silva Júnior - Subturma 01C (Líder) 
+    Etapa 2
 */
 
 //Cenário
-
-//BG
+var canvasSize = 512;
+var y2 = canvasSize;
 var bgImg;
 var y1 = 0;
 var y2;
 var scrollSpeed = 0.1;
 
-//---Background
-function showBg(){
+//Personagem
+var character;
+var characterImg;
+var lifeImg;
+
+//Tiro
+var shoot = new Array(); //Array de Objetos que Grava os Tiros
+delayShot = false;
+
+//Efeito do Background
+function showBg() {
 	imageMode(CORNER);
 	image(bgImg, 0, -y1, canvasSize, canvasSize);
 	image(bgImg, 0, -y2, canvasSize, canvasSize);
 
-	y1 -= scrollSpeed * (canvasSize - character.y);
-	y2 -= scrollSpeed * (canvasSize - character.y);
+	y1 -= scrollSpeed * (canvasSize - character.y)
+	y2 -= scrollSpeed * (canvasSize - character.y)
 
-	if (y1 < -canvasSize){
+	if (y1 < -canvasSize) {
 		y1 = canvasSize;
 	}
-	if (y2 < -canvasSize){
+	if (y2 < -canvasSize) {
 		y2 = canvasSize;
 	}
 }
 
-var canvasSize = 512;
-var imgLife;
-
-var character;
-var imgCharacter;
+//Carreganto das Imagens
 function preload() {
-
-	// imgCharacter = loadImage("assets/spaceship_small_blue.png");
-	// imgLife = loadImage("assets/heart.png");
-	// bgImg = loadImage("assets/bg.png");
-
+	characterImg = loadImage("assets/spaceship_small_blue.png");
+	bgImg = loadImage("assets/bg.png");
+	asteroidImg = loadImage("assets/asteroid.png");
 }
-var shoot = new Array(); //Array de Objetos que Grava os Tiros
-delayShot = false;
 
-var summon; //Objeto de Invocação
-var enemmyNumber = 8; // Inimigos no Mapa
-var enemmys = new Array(); //Array de Objetos que Grava Estado e Posição dos Inimigos
-
+//Configuração
 function setup() {
 	createCanvas(canvasSize, canvasSize);
-	y2 = canvasSize;
-//Personagem
-character = new Character();
+	
 
-//Inimigos
-for (i = 0; i < enemmyNumber; i++) {
-	enemmys.push(new EnemmyN1());
+	//Criando Personagem
+	character = new Character();
 }
 
-//Invocação  
-summon = new summonEnemmy();
-
-//FIM DA CONFIGURAÇAO
-}
+var enemmysNumber = 4; // Inimigos no Mapa
+var enemmys = new Array(); //Array de Objetos que Grava Estado e Posição dos Inimigos
 
 function draw() {
 	clear();
-	// showBg();
+	background(0)
+	showBg();
 	objcsUpdate();
 }
 
-//Cooldown
+//Recargad de tiros
 function Delay(t) {
 	setTimeout(
 		() => {
 			delayShot = false;
 		},
 		t * 100
-		);
+	);
 }
 
-//EnemmyN1 
-class EnemmyN1 {
+//Asteroide 
+class AsteroidN1 {
 	constructor() {
+		this.value = Math.round(Math.random(0, 1))
 		this.x = random(width);
-		this.y = random(-2000, 5);
-		this.diameter = random(20, 50);
+		this.y = random(-5, -20);
+		this.diameter = random(30, 80);
 		this.vSpeed = character.y / 100;
-		this.speed = random(10, 15) / this.diameter;
-		
+		this.speed = random(1, 3) / this.diameter;
 	}
 
 	move() {
-		this.x += random(1);
-		this.y += this.speed * 8;
-		summon.positionTest();
+		this.y += (this.speed) * (canvasSize - character.y)
 	}
 
 	display() {
-		fill(200, 0, 0);
-		ellipseMode(CENTER);
-		ellipse(this.x, this.y, this.diameter, this.diameter);
-		fill(0);
-		textSize(12);
-		text('1', this.x, this.y+5);
-		
-	}
-}
+		imageMode(CENTER);
+		image(asteroidImg, this.x, this.y,this.diameter,this.diameter);
 
-//Classe de Muniçao
-class ammoNv1 {
-	constructor() {
-		this.x = random(width);
-		this.y = 5;
-		this.diameter = random(15, 20);
-		this.speed = 2;
-	}
-
-	move() {
-		this.x += random(0.05 * this.y, -0.05 * this.y);
-		this.y += 2.5 + random(-5, 1);
-		summon.positionTest();
-	}
-
-	display() {
-		ellipse(this.x, this.y, this.diameter, this.diameter);
-		fill(0, 150, 200);
-	}
-}
-
-//IMPLEMENTANDO PARA FUNCIONAR COM O ARRAY
-class summonEnemmy {
-
-	positionTest() {
-		// for (i = 0; enemmys[i]< enemmys.length; i++){
-		// 	if (enemmys.y >= canvasSize){
-		// 		console.log(enemmys[i]+ 'Saiu')
-		// 	}
-		// }
 	}
 
 }
@@ -147,21 +101,19 @@ class Shoot {
 	constructor() {
 		this.x = character.x;
 		this.y = character.y;
-		this.diameter = 15;
-		this.speed = 5;
+		this.diameter = 10;
+		this.speed = 30;
+		this.shootColor = "#0055FF"
+		console.log("Atirando");
 	}
 
 	move() {
-		this.y -= this.speed;
+		this.y -= this.speed
 	}
 
 	display() {
-		fill(255);
-		ellipse(this.x, this.y, this.diameter, this.diameter);
-		textAlign(CENTER);
-		textSize(12);
-		fill(0, 0, 0);
-		text('1', this.x, this.y+5);
+		fill(this.shootColor);
+		rect(this.x, this.y, 4, this.diameter);
 	}
 
 }
@@ -169,157 +121,167 @@ class Shoot {
 //Classe do Protagonista
 class Character {
 	constructor() {
-		this.life = 1;
-		this.shootingSpeed = 7;
+		this.life = 100;
+		this.shootingSpeed = 5;
 		this.x = width / 2;
 		this.y = height - 60;
-		this.speed = 3;
-		this.diameter = 15;
+		this.speed = 2;
+		this.diameter = 25;
 		this.points = 0;
 	}
 
 	move() {
 
 
-//Controles
-//CIMA
-if (keyIsDown(87) && this.y > 20) {
-	this.y -= this.speed;
-}
+		//Controles
+		//CIMA
+		if (keyIsDown(87) && this.y > 20) {
+			this.y -= this.speed / 2;
+		}
 
-else if (keyIsDown(83) && this.y < canvasSize - 20) {
-	this.y += this.speed;
-}
+		else if (keyIsDown(83) && this.y < canvasSize - 20) {
+			this.y += this.speed;
+		}
 
-if (keyIsDown(65) && this.x > 20) {
-	this.x -= this.speed;
-}
+		if (keyIsDown(65) && this.x > 20) {
+			this.x -= this.speed;
+		}
 
-else if (keyIsDown(68) && this.x < canvasSize - 20) {
-	this.x += this.speed;
-}
+		else if (keyIsDown(68) && this.x < canvasSize - 20) {
+			this.x += this.speed;
+		}
 
-//Tiro simples
-if (keyIsDown(32) && delayShot === false) {
-	shoot.push(new Shoot());
-	delayShot = true;
-	Delay(character.shootingSpeed);
-}
-}
+		//Tiro simples
+		if (keyIsDown(32) && delayShot === false) {
+			shoot.push(new Shoot());
+			delayShot = true;
+			Delay(character.shootingSpeed);
+		}
+	}
 
-display() {
-		// imageMode(CENTER);
-		// image(imgCharacter, character.x, character.y);
-	// rectMode(CENTER);
-	fill(255, 255, 255);
-	ellipse(this.x, this.y, this.diameter, this.diameter);
-	fill(0);
-	textAlign(CENTER);
-	textSize(12);
-	text('1', this.x, this.y+5);
+	display() {
+		imageMode(CENTER);
+		image(characterImg, character.x, character.y);
+	}
 
-}
+	setLife(x) {
+		this.life += x;
+	}
 
-setLife(x){
-	this.life += x;
-}
-
-setPoints(x){
-	this.points += x;
-}
+	setPoints(x) {
+		this.points += x;
+	}
 
 }
 
 function objcsUpdate() {
 
-//------Atualizar Posições dos Objetos
-//-----Bonus
-if (typeof ammo !== 'undefined') {
-	ammo.move();
-	ammo.display();
-}
+	//------Atualizar Posições dos Objetos
 
-//-----Personagem
-if (typeof character !== 'undefined') {
-	character.move();
-	character.display();
-}
-//---Tiro
-if (typeof shoot !== 'undefined' && shoot.length > 0) {
-	for (i = 0; i < shoot.length; i++) {
-		shoot[i].move();
-		shoot[i].display();
-
-		//Verificar se o Tiro Saiu da Tela e o apaga do Array de objetos
-		if (shoot[i].y < 0){
-			shoot.splice(i, 1); 
-			i--;		
-		}
-
+	//-----Personagem
+	if (typeof character !== 'undefined') {
+		character.move();
+		character.display();
 	}
-}
+	//---Tiro
+	if (shoot.length > 0) {
+		for (i = 0; i < shoot.length; i++) {
+			shoot[i].move();
+			shoot[i].display();
 
-//Atualiza a Posição de Todos os Inimigos
-if (typeof enemmys !== 'undefined') {
+			//Verificar se o Tiro Saiu da Tela e o apaga do Array de objetos
+			if (shoot[i].y < 0) {
+				shoot.splice(i, 1);
+				i--;
+			}
+
+		}
+	}
+
+	//Atualiza a Posição de Todos os Inimigos
+
+	if (enemmys.length !== 0) {
+		for (i = 0; i < enemmys.length; i++) {
+			console.log(enemmys[i].y)
+			enemmys[i].move();
+			enemmys[i].display();
+
+			if (enemmys[i].y > canvasSize) {
+				enemmys.splice(i, 1);
+				i--;
+			}
+		}
+	}
+
+	else {
+		for (i = 0; i < enemmysNumber; i++) {
+			enemmys.push(new AsteroidN1());
+		}
+	}
+
+	//HUD
+	hudColor = "#39ff14"
+	fill(hudColor);
+	textSize(14);
+
+	fill(hudColor);
+	text("Pontos: " + character.points, width / 2 - 30, height - 30);
+
+	fill(hudColor);
+	text("Nível: 1", width - 70, 15);
+
+	noFill()
+	stroke(hudColor)
+	rect(30, height - 15, 100, 15)
+	fill(hudColor)
+	rect(30, height - 15, character.life, 15)
+	textSize(12);
+	fill(255);
+	text("Escudo: ", 30, height - 40);
+	fill(0)
+	text(character.life + "%", 30, height - 10);
+
+
+	//Sistema de Colisões JOGADOR-IMIGO
+
 	for (i = 0; i < enemmys.length; i++) {
-		enemmys[i].move();
-		enemmys[i].display();
-	}
-}
+		var a = enemmys[i].x - character.x;
+		var b = enemmys[i].y - character.y;
+		var c = Math.sqrt((a * a) + (b * b));
 
-//HUD
-fill(255, 255, 255);
-textFont('Helvetica');
-textSize(14);
+		surface = character.diameter + enemmys[i].diameter;
+		if (c <= surface / 2) {
+			console.log("Dano sofrido");
+			character.setLife(-1)
 
-fill(0, 0, 0);
-text("Pontos: "+ character.points, width / 2 - 30, 15);
-
-fill(0, 0, 0);
-text("Nível: 1", width - 70, 15);
-
-
-imageMode(CENTER);
-textSize(14);
-fill(0, 0, 0);
-text("Bits", 30, height - 40);
-text(character.life, 30, height - 20);
-
-
-
-//Sistema de Colisões JOGADOR-IMIGO
-
-for(i=0;i < enemmys.length; i++){
-	var a = enemmys[i].x - character.x;
-	var b = enemmys[i].y - character.y;
-	var c = Math.sqrt((a*a) + (b*b));
-
-	surface = character.diameter + enemmys[i].diameter;
-	if (c <= surface/2) {
-		console.log ("Game Over");
-		document.location.reload();
-	}
-}
-
-//Sistema de Colisões INIMIGO-TIRO (BETA)
-
-for(i=0;i < shoot.length; i++){
-	for (j=0; j < enemmys.length; j++){
-
-		var xDistance = enemmys[j].x - shoot[i].x;
-		var yDistance = enemmys[j].y - shoot[i].y;
-		var diagonalDistance = Math.sqrt((xDistance*xDistance) + (yDistance*yDistance));
-
-		surface = shoot[i].diameter + enemmys[j].diameter;
-		if (diagonalDistance <= surface/2) {
-			console.log ("Acertou um Inimigo");
-			character.setPoints(100);
-			enemmys.splice(j, 1);
-			j--;
+			// document.location.reload()
 		}
 	}
-	
-}
-//----FIM DO CÓDIGO----------
 
+	//Sistema de Colisões INIMIGO-TIRO (BETA)
+
+	if (enemmys.length !== 0 && shoot.length !== 0) {
+		for (i = 0; i < shoot.length; i++) {
+			for (j = 0; j < enemmys.length; j++) {
+
+				if (enemmys.length !== 0 && shoot.length !== 0) {
+				var xDistance = enemmys[j].x - shoot[i].x;
+				var yDistance = enemmys[j].y - shoot[i].y;
+				var diagonalDistance = Math.sqrt((xDistance * xDistance) + (yDistance * yDistance));
+							
+				surface = shoot[i].diameter + enemmys[j].diameter;
+				}
+				if (diagonalDistance <= surface / 2) {
+					console.log("Acertou um Inimigo");
+					character.setPoints(100);
+					enemmys.splice(j, 1);
+					j--;
+					shoot.splice(i, 1)
+					i--;
+				}
+			}
+
+		}
+	}
+	//----FIM DO CÓDIGO----------
 }
