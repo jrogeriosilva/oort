@@ -105,7 +105,7 @@ class Shoot {
 		this.y = character.y;
 		this.diameter = 10;
 		this.speed = 30;
-		this.shootColor = "#0055FF"
+		this.shootColor = "#00FFFF"
 		console.log("Atirando");
 	}
 
@@ -114,8 +114,9 @@ class Shoot {
 	}
 
 	display() {
+		noStroke()
 		fill(this.shootColor);
-		rect(this.x, this.y, 4, this.diameter);
+		rect(this.x, this.y, 2, this.diameter);
 	}
 
 }
@@ -176,9 +177,9 @@ class Character {
 
 function objcsUpdate() {
 
-	//------Atualizar Posições dos Objetos
+	///Atualizar Posições dos Objetos
 
-	//-----Personagem
+	//Personagem
 	if (typeof character !== 'undefined') {
 		character.move();
 		character.display();
