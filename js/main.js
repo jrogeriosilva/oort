@@ -21,7 +21,7 @@ var lifeImg;
 var shoot = new Array(); //Array de Objetos que Grava os Tiros
 delayShot = false;
 
-//Recargad de tiros
+//Recarga de tiros
 function Delay(t) {
 	setTimeout(
 		() => {
@@ -82,12 +82,12 @@ class AsteroidN1 {
 		this.diameter = random(30, 80);
 		this.vSpeed = character.y / 100;
 		this.speed = random(1, 3) / this.diameter;
-		this.direction = random (-1,1)
+		this.direction = random(-1, 1)
 	}
 
 	move() {
 		this.y += (this.speed) * (canvasSize - character.y)
-		this.x +=this.direction / 2
+		this.x += this.direction / 2
 	}
 
 	display() {
@@ -98,6 +98,7 @@ class AsteroidN1 {
 
 }
 
+//Tiro
 class Shoot {
 	constructor() {
 		this.x = character.x;
@@ -119,7 +120,7 @@ class Shoot {
 
 }
 
-//Classe do Protagonista
+//Personagem
 class Character {
 	constructor() {
 		this.life = 100;
@@ -132,22 +133,20 @@ class Character {
 	}
 
 	move() {
-
-
 		//Controles
-		//CIMA
+		//cima
 		if (keyIsDown(87) && this.y > 20) {
 			this.y -= this.speed / 2;
 		}
-
+		//baixo
 		else if (keyIsDown(83) && this.y < canvasSize - 20) {
 			this.y += this.speed;
 		}
-
+		//esquerda
 		if (keyIsDown(65) && this.x > 20) {
 			this.x -= this.speed;
 		}
-
+		//direita
 		else if (keyIsDown(68) && this.x < canvasSize - 20) {
 			this.x += this.speed;
 		}
@@ -212,9 +211,7 @@ function objcsUpdate() {
 				i--;
 			}
 		}
-	}
-
-	else {
+	} else {
 		for (i = 0; i < enemmysNumber; i++) {
 			enemmys.push(new AsteroidN1());
 		}
