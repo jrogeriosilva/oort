@@ -101,12 +101,12 @@ class AsteroidN1 {
 //Tiro
 class Shoot {
 	constructor() {
+		this.isColided
 		this.x = character.x;
 		this.y = character.y;
 		this.diameter = 10;
 		this.speed = 30;
 		this.shootColor = "#00FFFF"
-		console.log("Atirando");
 	}
 
 	move() {
@@ -125,7 +125,7 @@ class Shoot {
 class Character {
 	constructor() {
 		this.life = 100;
-		this.shootingSpeed = 5;
+		this.shootingSpeed = 3;
 		this.x = width / 2;
 		this.y = height - 60;
 		this.speed = 2;
@@ -203,7 +203,6 @@ function objcsUpdate() {
 
 	if (enemmys.length !== 0) {
 		for (i = 0; i < enemmys.length; i++) {
-			console.log(enemmys[i].y)
 			enemmys[i].move();
 			enemmys[i].display();
 
@@ -252,7 +251,7 @@ function objcsUpdate() {
 		if (c <= surface / 2) {
 			console.log("Dano sofrido");
 			character.setLife(-1)
-
+			character.move
 			// document.location.reload()
 		}
 	}
@@ -263,11 +262,10 @@ function objcsUpdate() {
 		for (i = 0; i < shoot.length; i++) {
 			for (j = 0; j < enemmys.length; j++) {
 
-				if (enemmys.length !== 0 && shoot.length !== 0) {
+				if (enemmys[j] !== undefined && shoot[i] !== undefined) {
 					var xDistance = enemmys[j].x - shoot[i].x;
 					var yDistance = enemmys[j].y - shoot[i].y;
 					var diagonalDistance = Math.sqrt((xDistance * xDistance) + (yDistance * yDistance));
-
 					surface = shoot[i].diameter + enemmys[j].diameter;
 				}
 				if (diagonalDistance <= surface / 2) {
@@ -275,8 +273,6 @@ function objcsUpdate() {
 					character.setPoints(100);
 					enemmys.splice(j, 1);
 					j--;
-					shoot.splice(i, 1)
-					i--;
 				}
 			}
 
