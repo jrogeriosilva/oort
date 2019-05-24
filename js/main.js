@@ -17,9 +17,23 @@ var character;
 var characterImg;
 var lifeImg;
 
-//Tiro
+//Tiros
 var shoot = new Array(); //Array de Objetos que Grava os Tiros
 delayShot = false;
+
+//Recargad de tiros
+function Delay(t) {
+	setTimeout(
+		() => {
+			delayShot = false;
+		},
+		t * 100
+	);
+}
+
+//Asteroides
+var enemmysNumber = 4; // Inimigos no Mapa
+var enemmys = new Array(); //Array de Objetos que Grava Estado e Posição dos Inimigos
 
 //Efeito do Background
 function showBg() {
@@ -48,30 +62,15 @@ function preload() {
 //Configuração
 function setup() {
 	createCanvas(canvasSize, canvasSize);
-	
-
 	//Criando Personagem
 	character = new Character();
 }
-
-var enemmysNumber = 4; // Inimigos no Mapa
-var enemmys = new Array(); //Array de Objetos que Grava Estado e Posição dos Inimigos
 
 function draw() {
 	clear();
 	background(0)
 	showBg();
 	objcsUpdate();
-}
-
-//Recargad de tiros
-function Delay(t) {
-	setTimeout(
-		() => {
-			delayShot = false;
-		},
-		t * 100
-	);
 }
 
 //Asteroide 
@@ -83,15 +82,17 @@ class AsteroidN1 {
 		this.diameter = random(30, 80);
 		this.vSpeed = character.y / 100;
 		this.speed = random(1, 3) / this.diameter;
+		this.direction = random (-1,1)
 	}
 
 	move() {
 		this.y += (this.speed) * (canvasSize - character.y)
+		this.x +=this.direction / 2
 	}
 
 	display() {
 		imageMode(CENTER);
-		image(asteroidImg, this.x, this.y,this.diameter,this.diameter);
+		image(asteroidImg, this.x, this.y, this.diameter, this.diameter);
 
 	}
 
@@ -265,11 +266,11 @@ function objcsUpdate() {
 			for (j = 0; j < enemmys.length; j++) {
 
 				if (enemmys.length !== 0 && shoot.length !== 0) {
-				var xDistance = enemmys[j].x - shoot[i].x;
-				var yDistance = enemmys[j].y - shoot[i].y;
-				var diagonalDistance = Math.sqrt((xDistance * xDistance) + (yDistance * yDistance));
-							
-				surface = shoot[i].diameter + enemmys[j].diameter;
+					var xDistance = enemmys[j].x - shoot[i].x;
+					var yDistance = enemmys[j].y - shoot[i].y;
+					var diagonalDistance = Math.sqrt((xDistance * xDistance) + (yDistance * yDistance));
+
+					surface = shoot[i].diameter + enemmys[j].diameter;
 				}
 				if (diagonalDistance <= surface / 2) {
 					console.log("Acertou um Inimigo");
