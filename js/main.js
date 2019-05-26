@@ -133,12 +133,16 @@ class Character {
 	move() {
 		//Controles
 		//cima
-		if (keyIsDown(87) && this.y > 20) {
+		if (keyIsDown(87) && this.y > 200) {
 			this.y -= this.speed / 2;
 		}
 		//baixo
 		else if (keyIsDown(83) && this.y < canvasSize - 20) {
 			this.y += this.speed;
+		}
+		//desaceleração passiva
+		else if(this.y<canvasSize -50){
+			this.y += 1;
 		}
 		//esquerda
 		if (keyIsDown(65) && this.x > 20) {
@@ -241,7 +245,7 @@ function objcsUpdate() {
 	rect(30, height - 15, character.life, 15)
 	textSize(12);
 	fill(255);
-	text("Escudo: ", 30, height - 40);
+	text("Escudo: ", 30, height - 30);
 	fill(0)
 	text(character.life + "%", 30, height - 10);
 
@@ -278,6 +282,9 @@ function objcsUpdate() {
 					character.setPoints(100);
 					enemmys.splice(j, 1);
 					j--;
+					shoot.splice(i, 1);
+					i--;
+					break	
 				}
 			}
 
