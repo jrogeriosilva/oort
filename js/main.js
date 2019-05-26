@@ -15,7 +15,6 @@ var scrollSpeed = 0.1;
 //Personagem
 var character;
 var characterImg;
-var lifeImg;
 
 //Tiros
 var shoot = new Array(); //Array de Objetos que Grava os Tiros
@@ -76,13 +75,12 @@ function draw() {
 //Asteroide 
 class AsteroidN1 {
 	constructor() {
-		this.value = Math.round(Math.random(0, 1))
 		this.x = random(width);
 		this.y = random(-5, -20);
 		this.diameter = random(30, 80);
 		this.vSpeed = character.y / 100;
 		this.speed = random(1, 3) / this.diameter;
-		this.direction = random(-1, 1)
+		this.direction = random(-3, 3)
 	}
 
 	move() {
@@ -101,7 +99,6 @@ class AsteroidN1 {
 //Tiro
 class Shoot {
 	constructor() {
-		this.isColided
 		this.x = character.x;
 		this.y = character.y;
 		this.diameter = 10;
@@ -173,6 +170,10 @@ class Character {
 		this.points += x;
 	}
 
+	die(){
+		document.location.reload()
+	}
+
 }
 
 function objcsUpdate() {
@@ -184,6 +185,11 @@ function objcsUpdate() {
 		character.move();
 		character.display();
 	}
+
+	if (character.life <= 0){
+		character.die()
+	}
+
 	//---Tiro
 	if (shoot.length > 0) {
 		for (i = 0; i < shoot.length; i++) {
@@ -250,9 +256,8 @@ function objcsUpdate() {
 		surface = character.diameter + enemmys[i].diameter;
 		if (c <= surface / 2) {
 			console.log("Dano sofrido");
-			character.setLife(-1)
+			character.setLife(-3)
 			character.move
-			// document.location.reload()
 		}
 	}
 
