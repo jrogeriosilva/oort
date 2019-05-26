@@ -10,7 +10,10 @@ var y2 = canvasSize;
 var bgImg;
 var y1 = 0;
 var y2;
-var scrollSpeed = 0.1;
+var scrollSpeed = 0.03;
+
+//Bonus
+var lifeBonus;
 
 //Personagem
 var character;
@@ -31,7 +34,7 @@ function Delay(t) {
 }
 
 //Asteroides
-var enemmysNumber = 4; // Inimigos no Mapa
+var enemmysNumber = 4
 var enemmys = new Array(); //Array de Objetos que Grava Estado e Posição dos Inimigos
 
 //Efeito do Background
@@ -63,6 +66,7 @@ function setup() {
 	createCanvas(canvasSize, canvasSize);
 	//Criando Personagem
 	character = new Character();
+	lifeBonus = new Lifebonus();
 }
 
 function draw() {
@@ -80,7 +84,7 @@ class AsteroidN1 {
 		this.diameter = random(30, 80);
 		this.vSpeed = character.y / 100;
 		this.speed = random(1, 3) / this.diameter;
-		this.direction = random(-3, 3)
+		this.direction = random(-1, 1)
 	}
 
 	move() {
@@ -92,6 +96,27 @@ class AsteroidN1 {
 		imageMode(CENTER);
 		image(asteroidImg, this.x, this.y, this.diameter, this.diameter);
 
+	}
+
+}
+
+//Vida Bonus
+class Lifebonus {
+	constructor() {
+		this.x = random(width);
+		this.y = random(-5, -20);
+		this.vSpeed = character.y / 100;
+		this.speed = random(0.5,1)
+	}
+
+	
+	move() {
+		this.y += (this.speed) * (canvasSize - character.y)
+	}
+
+	display() {
+		fill(255)
+		ellipse(this.x, this.y, 50, 50);
 	}
 
 }
@@ -122,7 +147,7 @@ class Shoot {
 class Character {
 	constructor() {
 		this.life = 100;
-		this.shootingSpeed = 3;
+		this.shootingSpeed = 2;
 		this.x = width / 2;
 		this.y = height - 60;
 		this.speed = 2;
@@ -225,7 +250,14 @@ function objcsUpdate() {
 		for (i = 0; i < enemmysNumber; i++) {
 			enemmys.push(new AsteroidN1());
 		}
+		enemmysNumber = enemmysNumber * 1.2
 	}
+
+
+	if (typeof lifeBonus !== 'undefined') {
+	}
+
+
 
 	//HUD
 	hudColor = "#39ff14"
@@ -261,11 +293,22 @@ function objcsUpdate() {
 		if (c <= surface / 2) {
 			console.log("Dano sofrido");
 			character.setLife(-3)
-			character.move
+			if ( enemmys[i].y + enemmys[i].diameter > character.y){
+				character.y += 10
+			}
 		}
 	}
 
 	//Sistema de Colisões INIMIGO-TIRO (BETA)
+
+//Destroi Tiro e Asteroide ao colidirem
+	function destroyBoth(){
+		character.setPoints(100);
+		enemmys.splice(j, 1);
+		j--;
+		shoot.splice(i, 1);
+		i--;
+	}
 
 	if (enemmys.length !== 0 && shoot.length !== 0) {
 		for (i = 0; i < shoot.length; i++) {
@@ -278,13 +321,8 @@ function objcsUpdate() {
 					surface = shoot[i].diameter + enemmys[j].diameter;
 				}
 				if (diagonalDistance <= surface / 2) {
-					console.log("Acertou um Inimigo");
-					character.setPoints(100);
-					enemmys.splice(j, 1);
-					j--;
-					shoot.splice(i, 1);
-					i--;
-					break	
+					destroyBoth();
+					break
 				}
 			}
 
