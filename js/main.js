@@ -276,21 +276,21 @@ function objcsUpdate() {
 	textSize(14);
 
 	fill(hudColor);
-	text("Pontos: " + character.points, width / 2 - 30, height - 30);
+	text("Pontos: " + character.points, width / 2 - 30, height - 15);
 
 	fill(hudColor);
-	text("Nível: "+ wave, width - 70, 15);
+	text("Onda: "+ wave, width - 70, 15);
 
-	noFill()
-	stroke(hudColor)
-	rect(30, height - 15, 100, 15)
+	
+	fill(80);
+	rect(30, height - 17, 100, 15)
 	fill(hudColor)
-	rect(30, height - 15, character.life, 15)
+	rect(30, height - 17, character.life, 15)
 	textSize(12);
 	fill(255);
-	text("HP: ", 30, height - 30);
+	text("HP: ", 30, height - 20);
 	fill(0)
-	text(character.life + "%", 30, height - 10);
+	text(character.life + "%", 30, height - 5);
 
 
 	//Sistema de Colisões JOGADOR-IMIGO
