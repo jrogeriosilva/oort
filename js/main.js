@@ -67,7 +67,6 @@ function setup() {
 	createCanvas(canvasSize, canvasSize);
 	//Criando Personagem
 	character = new Character();
-	lifeBonus = new Lifebonus();
 }
 
 function draw() {
@@ -103,11 +102,11 @@ class AsteroidN1 {
 
 //Vida Bonus
 class Lifebonus {
-	constructor() {
-		this.x = random(width);
-		this.y = random(-5, -20);
+	constructor(x,y) {
+		this.x = x
+		this.y = y
 		this.vSpeed = character.y / 100;
-		this.speed = random(0.5,1)
+		this.speed = 0.01
 	}
 
 	
@@ -117,7 +116,20 @@ class Lifebonus {
 
 	display() {
 		fill(255)
-		ellipse(this.x, this.y, 50, 50);
+		ellipse(this.x, this.y, 25, 25);
+	}
+
+	checkCollect(){
+
+			var a = lifeBonus.x - character.x;
+			var b = lifeBonus.y - character.y;
+			var c = Math.sqrt((a * a) + (b * b));
+	
+			if (c <= 20) {
+				console.log("Obj Colletado");
+				lifeBonus = undefined
+			}		
+		
 	}
 
 }
@@ -254,6 +266,9 @@ function objcsUpdate() {
 			}
 		}
 	} 
+
+		//Personagem
+
 	//Passando de onda
 	else {
 		for (i = 0; i < enemmysNumber; i++) {
@@ -264,11 +279,10 @@ function objcsUpdate() {
 		character.setPoints(wave*50)
 	}
 
-
 	if (typeof lifeBonus !== 'undefined') {
+		lifeBonus.move();
+		lifeBonus.display();
 	}
-
-
 
 	//HUD
 	hudColor = "#39ff14"
@@ -314,6 +328,11 @@ function objcsUpdate() {
 
 //Destroi Tiro e Asteroide ao colidirem
 	function destroyBoth(){
+		var dropRate = random(1,100)
+		if (dropRate <= 50) {
+		lifeBonus = new Lifebonus(enemmys[j].x,enemmys[j].y);
+		}
+
 		character.setPoints(100);
 		enemmys.splice(j, 1);
 		j--;
@@ -340,4 +359,8 @@ function objcsUpdate() {
 		}
 	}
 	//----FIM DO CÓDIGO----------
+
+	if (typeof lifeBonus !== 'undefined'){
+	lifeBonus.checkCollect()
+	}
 }
