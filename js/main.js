@@ -11,6 +11,7 @@ var bgImg;
 var y1 = 0;
 var y2;
 var scrollSpeed = 0.03;
+var wave = 0
 
 //Bonus
 var lifeBonus;
@@ -34,7 +35,7 @@ function Delay(t) {
 }
 
 //Asteroides
-var enemmysNumber = 4
+var enemmysNumber = 10
 var enemmys = new Array(); //Array de Objetos que Grava Estado e Posição dos Inimigos
 
 //Efeito do Background
@@ -81,7 +82,7 @@ class AsteroidN1 {
 	constructor() {
 		this.x = random(width);
 		this.y = random(-5, -20);
-		this.diameter = random(30, 80);
+		this.diameter = random(18, 90);
 		this.vSpeed = character.y / 100;
 		this.speed = random(1, 3) / this.diameter;
 		this.direction = random(-1, 1)
@@ -125,10 +126,16 @@ class Lifebonus {
 class Shoot {
 	constructor() {
 		this.x = character.x;
-		this.y = character.y;
+		this.y = character.y - 30;
 		this.diameter = 10;
-		this.speed = 30;
+		this.speed = 8	;
 		this.shootColor = "#00FFFF"
+
+		noStroke()
+		fill(this.shootColor);
+		ellipse(this.x, this.y+8,15, 15);
+
+
 	}
 
 	move() {
@@ -246,11 +253,15 @@ function objcsUpdate() {
 				i--;
 			}
 		}
-	} else {
+	} 
+	//Passando de onda
+	else {
 		for (i = 0; i < enemmysNumber; i++) {
 			enemmys.push(new AsteroidN1());
 		}
 		enemmysNumber = enemmysNumber * 1.2
+		wave++
+		character.setPoints(wave*50)
 	}
 
 
@@ -268,7 +279,7 @@ function objcsUpdate() {
 	text("Pontos: " + character.points, width / 2 - 30, height - 30);
 
 	fill(hudColor);
-	text("Nível: 1", width - 70, 15);
+	text("Nível: "+ wave, width - 70, 15);
 
 	noFill()
 	stroke(hudColor)
@@ -277,7 +288,7 @@ function objcsUpdate() {
 	rect(30, height - 15, character.life, 15)
 	textSize(12);
 	fill(255);
-	text("Escudo: ", 30, height - 30);
+	text("HP: ", 30, height - 30);
 	fill(0)
 	text(character.life + "%", 30, height - 10);
 
