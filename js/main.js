@@ -15,6 +15,7 @@ var wave = 0
 
 //Bonus
 var lifeBonus;
+var shootSpeedbonus
 
 //Personagem
 var character;
@@ -99,7 +100,7 @@ class AsteroidN1 {
 	}
 
 }
-
+//BONUS
 //Vida Bonus
 class Lifebonus {
 	constructor(x,y) {
@@ -115,9 +116,13 @@ class Lifebonus {
 	}
 
 	display() {
-		fill(255)
+		fill(100,255,100)
 		ellipse(this.x, this.y, 25, 25);
+		fill(0)
+		text("HP", this.x-7, this.y+5)
 	}
+
+	
 
 	checkCollect(){
 
@@ -133,6 +138,44 @@ class Lifebonus {
 	}
 
 }
+
+class Shootspeedbonus {
+	constructor(x,y) {
+		this.x = x
+		this.y = y
+		this.vSpeed = character.y / 100;
+		this.speed = 0.008
+	}
+
+	
+	move() {
+		this.y += (this.speed) * (canvasSize - character.y)
+	}
+
+	display() {
+		fill(100,255,100)
+		ellipse(this.x, this.y, 25, 25);
+		fill(0)
+		text("Gun", this.x-7, this.y+5)
+	}
+
+	
+
+	checkCollect(){
+
+			var a = this.x - character.x;
+			var b = this.y - character.y;
+			var c = Math.sqrt((a * a) + (b * b));
+	
+			if (c <= 20) {
+				character.setShootspeed(-0.2)
+				shootSpeedbonus = undefined
+			}		
+		
+	}
+
+}
+
 
 //Tiro
 class Shoot {
@@ -166,7 +209,7 @@ class Shoot {
 class Character {
 	constructor() {
 		this.life = 100;
-		this.shootingSpeed = 2;
+		this.shootingSpeed = 4.5;
 		this.x = width / 2;
 		this.y = height - 60;
 		this.speed = 2;
@@ -216,6 +259,10 @@ class Character {
 
 	setPoints(x) {
 		this.points += x;
+	}
+
+	setShootspeed(x) {
+		this.shootingSpeed += x;
 	}
 
 	die(){
@@ -279,9 +326,15 @@ function objcsUpdate() {
 		character.setPoints(wave*50)
 	}
 
+	//Atualizando Posição dos Bonus
 	if (typeof lifeBonus !== 'undefined') {
 		lifeBonus.move();
 		lifeBonus.display();
+	}
+
+	if (typeof shootSpeedbonus !== 'undefined') {
+		shootSpeedbonus.move();
+		shootSpeedbonus.display();
 	}
 
 	//HUD
@@ -328,9 +381,11 @@ function objcsUpdate() {
 
 //Destroi Tiro e Asteroide ao colidirem
 	function destroyBoth(){
-		var dropRate = random(1,100)
-		if (dropRate <= 5 && lifeBonus == undefined) {
-		lifeBonus = new Lifebonus(enemmys[j].x,enemmys[j].y);
+		if (random(1,100) <= 20 && lifeBonus == undefined) {
+			lifeBonus = new Lifebonus(enemmys[j].x,enemmys[j].y);
+		}
+		else if (random(1,100) <= 80 && shootSpeedbonus == undefined){
+			shootSpeedbonus = new Shootspeedbonus(enemmys[j].x,enemmys[j].y);
 		}
 
 		character.setPoints(100);
@@ -361,9 +416,22 @@ function objcsUpdate() {
 	//----FIM DO CÓDIGO----------
 
 	if (typeof lifeBonus !== 'undefined'){
-		if (lifeBonus.y > canvasSize){
-			// lifeBonus = undefined
-		}
 		lifeBonus.checkCollect()
 	}
+	if (typeof lifeBonus !== 'undefined') {
+		if (lifeBonus.y > canvasSize){
+			lifeBonus = undefined
+		}
+	}
+
+
+	if (typeof shootSpeedbonus !== 'undefined'){
+		shootSpeedbonus.checkCollect()
+	}
+	if (typeof shootSpeedbonus !== 'undefined') {
+		if (shootSpeedbonus.y > canvasSize){
+			shootSpeedbonus = undefined
+		}
+	}
+
 }
