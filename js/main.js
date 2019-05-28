@@ -11,7 +11,10 @@ var bgImg;
 var y1 = 0;
 var y2;
 var scrollSpeed = 0.05;
-var wave = 0
+var wave = 0;
+var explosion;
+
+
 
 //Bonus
 var lifeBonus;
@@ -61,6 +64,8 @@ function preload() {
 	characterImg = loadImage("assets/spaceship_small_blue.png");
 	bgImg = loadImage("assets/bg.png");
 	asteroidImg = loadImage("assets/asteroid.png");
+
+	explosion = loadImage("assets/explosion.gif");
 }
 
 //Configuração
@@ -387,6 +392,7 @@ function objcsUpdate() {
 		else if (random(1,100) <= 80 && shootSpeedbonus == undefined){
 			shootSpeedbonus = new Shootspeedbonus(enemmys[j].x,enemmys[j].y);
 		}
+		image(explosion,enemmys[j].x, enemmys[j].y, enemmys[j].diameter * 2, enemmys[j].diameter * 2)
 
 		character.setPoints(100);
 		enemmys.splice(j, 1);
