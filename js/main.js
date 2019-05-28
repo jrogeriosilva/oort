@@ -39,7 +39,7 @@ function Delay(t) {
 }
 
 //Asteroides
-var enemmysNumber = 10
+var enemmysNumber = 1
 var enemmys = new Array(); //Array de Objetos que Grava Estado e Posição dos Inimigos
 
 //Efeito do Background
@@ -86,7 +86,7 @@ function draw() {
 class AsteroidN1 {
 	constructor() {
 		this.x = random(width);
-		this.y = random(-5, -20);
+		this.y = random(-10, -250);
 		this.diameter = random(18, 90);
 		this.vSpeed = character.y / 100;
 		this.speed = random(1, 3) / this.diameter;
@@ -150,6 +150,7 @@ class Shootspeedbonus {
 		this.y = y
 		this.vSpeed = character.y / 100;
 		this.speed = 0.008
+		this.effect = character.setShootspeed(-0.2)
 	}
 
 	
@@ -161,7 +162,7 @@ class Shootspeedbonus {
 		fill(100,255,100)
 		ellipse(this.x, this.y, 25, 25);
 		fill(0)
-		text("Gun", this.x-7, this.y+5)
+		text("S", this.x-7, this.y+5)
 	}
 
 	
@@ -214,10 +215,10 @@ class Shoot {
 class Character {
 	constructor() {
 		this.life = 100;
-		this.shootingSpeed = 4.5;
+		this.shootingSpeed = 1.8;
 		this.x = width / 2;
 		this.y = height - 60;
-		this.speed = 3;
+		this.speed = 8;
 		this.diameter = 25;
 		this.points = 0;
 	}
@@ -284,6 +285,10 @@ function objcsUpdate() {
 	if (typeof character !== 'undefined') {
 		character.move();
 		character.display();
+
+		if (character.y > canvasSize - 10){
+			character.y -= 20
+		}
 	}
 
 	if (character.life <= 0){
@@ -307,7 +312,7 @@ function objcsUpdate() {
 
 	//Atualiza a Posição de Todos os Inimigos
 
-	if (enemmys.length !== 0) {
+	if (enemmys.length > enemmysNumber) {
 		for (i = 0; i < enemmys.length; i++) {
 			enemmys[i].move();
 			enemmys[i].display();
@@ -326,7 +331,7 @@ function objcsUpdate() {
 		for (i = 0; i < enemmysNumber; i++) {
 			enemmys.push(new AsteroidN1());
 		}
-		enemmysNumber = enemmysNumber * 1.2
+		enemmysNumber = enemmysNumber * 1.1
 		wave++
 		character.setPoints(wave*50)
 	}
