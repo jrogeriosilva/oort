@@ -106,7 +106,7 @@ class Lifebonus {
 		this.x = x
 		this.y = y
 		this.vSpeed = character.y / 100;
-		this.speed = 0.01
+		this.speed = 0.008
 	}
 
 	
@@ -126,7 +126,7 @@ class Lifebonus {
 			var c = Math.sqrt((a * a) + (b * b));
 	
 			if (c <= 20) {
-				console.log("Obj Colletado");
+				character.setLife(10)
 				lifeBonus = undefined
 			}		
 		
@@ -329,7 +329,7 @@ function objcsUpdate() {
 //Destroi Tiro e Asteroide ao colidirem
 	function destroyBoth(){
 		var dropRate = random(1,100)
-		if (dropRate <= 50) {
+		if (dropRate <= 5 && lifeBonus == undefined) {
 		lifeBonus = new Lifebonus(enemmys[j].x,enemmys[j].y);
 		}
 
@@ -361,6 +361,9 @@ function objcsUpdate() {
 	//----FIM DO CÓDIGO----------
 
 	if (typeof lifeBonus !== 'undefined'){
-	lifeBonus.checkCollect()
+		if (lifeBonus.y > canvasSize){
+			// lifeBonus = undefined
+		}
+		lifeBonus.checkCollect()
 	}
 }
