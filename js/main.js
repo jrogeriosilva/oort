@@ -10,7 +10,7 @@ var y2 = canvasSize;
 var bgImg;
 var y1 = 0;
 var y2;
-var scrollSpeed = 0.03;
+var scrollSpeed = 0.05;
 var wave = 0
 
 //Bonus
@@ -212,7 +212,7 @@ class Character {
 		this.shootingSpeed = 4.5;
 		this.x = width / 2;
 		this.y = height - 60;
-		this.speed = 2;
+		this.speed = 3;
 		this.diameter = 25;
 		this.points = 0;
 	}
@@ -221,7 +221,7 @@ class Character {
 		//Controles
 		//cima
 		if (keyIsDown(87) && this.y > 200) {
-			this.y -= this.speed / 2;
+			this.y -= this.speed / 1.5;
 		}
 		//baixo
 		else if (keyIsDown(83) && this.y < canvasSize - 20) {
