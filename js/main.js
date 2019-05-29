@@ -15,7 +15,6 @@ var wave = 0;
 var explosion;
 
 
-
 //Bonus
 var lifeBonus;
 var shootSpeedbonus
@@ -150,7 +149,6 @@ class Shootspeedbonus {
 		this.y = y
 		this.vSpeed = character.y / 100;
 		this.speed = 0.008
-		this.effect = character.setShootspeed(-0.2)
 	}
 
 	
@@ -174,7 +172,8 @@ class Shootspeedbonus {
 			var c = Math.sqrt((a * a) + (b * b));
 	
 			if (c <= 20) {
-				character.setShootspeed(-0.2)
+				character.setShootspeed(-0.0002)
+				character.upgrade += 1
 				shootSpeedbonus = undefined
 			}		
 		
@@ -185,22 +184,24 @@ class Shootspeedbonus {
 
 //Tiro
 class Shoot {
-	constructor() {
-		this.x = character.x;
-		this.y = character.y - 30;
+	constructor(x,y, d) {
+		this.d = d
+		this.x = character.x + x;
+		this.y = character.y - 20 + y;
 		this.diameter = 10;
-		this.speed = 8	;
+		this.speed = 4	;
 		this.shootColor = "#00FFFF"
 
 		noStroke()
 		fill(this.shootColor);
-		ellipse(this.x, this.y+8,15, 15);
+		ellipse(this.x, this.y, 8, 8);
 
 
 	}
 
 	move() {
 		this.y -= this.speed
+		this.x += this.y  / (400 * this.d)
 	}
 
 	display() {
@@ -215,12 +216,13 @@ class Shoot {
 class Character {
 	constructor() {
 		this.life = 100;
-		this.shootingSpeed = 1.8;
+		this.shootingSpeed = 2.5;
 		this.x = width / 2;
 		this.y = height - 60;
-		this.speed = 8;
+		this.speed = 7;
 		this.diameter = 25;
 		this.points = 0;
+		this.upgrade = 1
 	}
 
 	move() {
@@ -248,7 +250,14 @@ class Character {
 
 		//Tiro simples
 		if (keyIsDown(32) && delayShot === false) {
-			shoot.push(new Shoot());
+			// shoot.push(new Shoot(-8,5));//Cria um tiro e o insere no array de tiros. O valor apos o Shoot referece ao aliamento
+			// shoot.push(new Shoot(+6,5))
+
+			for (i= 0; i < character.upgrade; i++){
+				shoot.push(new Shoot(-8 - (i*8),5 + (i*15),-1))
+				shoot.push(new Shoot(6 + (i*8),5 + (i*15),1))
+			}
+
 			delayShot = true;
 			Delay(character.shootingSpeed);
 		}
@@ -331,7 +340,7 @@ function objcsUpdate() {
 		for (i = 0; i < enemmysNumber; i++) {
 			enemmys.push(new AsteroidN1());
 		}
-		enemmysNumber = enemmysNumber * 1.1
+		enemmysNumber = enemmysNumber * 1.02
 		wave++
 		character.setPoints(wave*50)
 	}
