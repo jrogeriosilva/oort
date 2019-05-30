@@ -60,10 +60,13 @@ function showBg() {
 
 //Carreganto das Imagens
 function preload() {
-	characterImg = loadImage("assets/spaceship_small_blue.png");
+	characterImg = []
+	for (i=0; i < 8; i++){
+		characterImg[i] = loadImage("assets/character/redfighter_"+i+".png");
+	}
+	
 	bgImg = loadImage("assets/bg.png");
 	asteroidImg = loadImage("assets/asteroid.png");
-
 	explosion = loadImage("assets/explosion.gif");
 }
 
@@ -200,7 +203,7 @@ class Shoot {
 
 	move() {
 		this.y -= this.speed
-		this.x += this.y  / (400 * this.d)
+		this.x += this.y / 800 * this.d
 	}
 
 	display() {
@@ -218,8 +221,8 @@ class Character {
 		this.shootingSpeed = 5.5;
 		this.x = width / 2;
 		this.y = height - 60;
-		this.speed = 7;
-		this.diameter = 25;
+		this.speed = 4;
+		this.diameter = 80;
 		this.points = 0;
 		this.upgrade = 1
 	}
@@ -253,8 +256,8 @@ class Character {
 			// shoot.push(new Shoot(+6,5))
 
 			for (i= 0; i < character.upgrade; i++){
-				shoot.push(new Shoot(-8 - (i*8),5 + (i*15),-1))
-				shoot.push(new Shoot(6 + (i*8),5 + (i*15),1))
+				shoot.push(new Shoot(-8/1+i - (i*8),5 + (i*15),-1))
+				shoot.push(new Shoot(6/1+i + (i*8),5 + (i*15),1))
 			}
 
 			delayShot = true;
@@ -264,7 +267,15 @@ class Character {
 
 	display() {
 		imageMode(CENTER);
-		image(characterImg, character.x, character.y);
+		if (keyIsDown(65)){
+			image(characterImg[0], character.x, character.y,character.diameter,character.diameter);
+		}
+		else if (keyIsDown(68)) {
+			image(characterImg[1], character.x, character.y,character.diameter,character.diameter);
+		  }
+		else {
+			image(characterImg[4], character.x, character.y,character.diameter,character.diameter);
+		}
 	}
 
 	setLife(x) {
@@ -386,7 +397,7 @@ function objcsUpdate() {
 		var c = Math.sqrt((a * a) + (b * b));
 
 		surface = character.diameter + enemmys[i].diameter;
-		if (c <= surface / 2) {
+		if (c <= surface / 3) {
 			console.log("Dano sofrido");
 			character.setLife(-3)
 			if ( enemmys[i].y + enemmys[i].diameter > character.y){
