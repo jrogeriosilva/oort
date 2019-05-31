@@ -12,7 +12,10 @@ var y1 = 0;
 var y2;
 var scrollSpeed = 0.0005;
 var wave = 0;
-var explosion;
+var explosionImg = [];
+var explosion
+var explosionFrame = 0
+var cont = 0
 
 
 //Bonus
@@ -64,10 +67,13 @@ function preload() {
 	for (i=0; i < 8; i++){
 		characterImg[i] = loadImage("assets/character/redfighter_"+i+".png");
 	}
+
+	for (i=0; i < 10; i++){
+		explosionImg[i] = loadImage("assets/explosion/bubble_explo"+i+".png");
+	}
 	
 	bgImg = loadImage("assets/bg.png");
 	asteroidImg = loadImage("assets/asteroid.png");
-	explosion = loadImage("assets/explosion.gif");
 }
 
 //Configuração
@@ -75,6 +81,7 @@ function setup() {
 	createCanvas(canvasSize, canvasSize);
 	//Criando Personagem
 	character = new Character();
+	frame = 0
 }
 
 function draw() {
@@ -82,6 +89,25 @@ function draw() {
 	background(0)
 	showBg();
 	objcsUpdate();
+	explosionUpdate();
+}
+
+//Explosão
+class Explosion {
+	constructor(x,y,diameter) {
+		this.x = x;
+		this.y = y;
+		this.diameter = diameter
+	}
+
+	display(){
+		if (explosionFrame >= 2){
+			image(explosionImg[cont],this.x, this.y, this.diameter * 2, this.diameter * 2)
+			cont++
+			explosionFrame = 0
+		}
+
+	}
 }
 
 //Asteroide 
@@ -191,7 +217,7 @@ class Shoot {
 		this.x = character.x + x;
 		this.y = character.y - 20 + y;
 		this.diameter = 10;
-		this.speed = 4	;
+		this.speed = 10	;
 		this.shootColor = "#00FFFF"
 
 		noStroke()
@@ -295,6 +321,15 @@ class Character {
 	}
 
 }
+
+function explosionUpdate(){
+	if (typeof explosion !== 'undefined') {
+		explosion.display()
+		explosionFrame++
+	}
+}
+
+
 
 function objcsUpdate() {
 
@@ -416,7 +451,8 @@ function objcsUpdate() {
 		else if (random(1,100) <= 80 && shootSpeedbonus == undefined){
 			shootSpeedbonus = new Shootspeedbonus(enemmys[j].x,enemmys[j].y);
 		}
-		image(explosion,enemmys[j].x, enemmys[j].y, enemmys[j].diameter * 2, enemmys[j].diameter * 2)
+		
+		explosion = new Explosion(enemmys[j].x, enemmys[j].y, enemmys[j].diameter);
 
 		character.setPoints(100);
 		enemmys.splice(j, 1);
