@@ -10,7 +10,7 @@ var y2 = canvasSize;
 var bgImg;
 var y1 = 0;
 var y2;
-var scrollSpeed = 0.05;
+var scrollSpeed = 0.008;
 var wave = 0;
 var explosion;
 
@@ -22,6 +22,8 @@ var shootSpeedbonus
 //Personagem
 var character;
 var characterImg;
+
+var hud;
 
 //Tiros
 var shoot = new Array(); //Array de Objetos que Grava os Tiros
@@ -70,15 +72,61 @@ function preload() {
 //Configuração
 function setup() {
 	createCanvas(canvasSize, canvasSize);
+	
 	//Criando Personagem
 	character = new Character();
+	hud = new Hud();
 }
 
 function draw() {
 	clear();
 	background(0)
 	showBg();
+	hud.update();
+	hud.showAll();
 	objcsUpdate();
+}
+//HUD
+class Hud{
+	constructor(){
+		this.color = "#39ff14"
+		this.black = 80
+	}
+
+	update(){
+		this.points = character.points
+		this.hp = character.hp
+		this.wave = wave
+	}
+
+	showWave(){
+		fill(this.color);
+		textSize(14);
+		text("Onda: "+ this.wave, width - 70, 15);
+	}
+
+	showPoints(){
+		fill(this.color);
+		textSize(14);
+		text("Pontos: " + this.points, width / 2 - 30, height - 15);
+	}
+
+	showHpbar(){
+		fill(this.color)
+		rect(30, height - 17, this.hp, 15)
+		textSize(12);
+		fill(255);
+		text("HP: ", 30, height - 20);
+		fill(0)
+		text(this.hp + "%", 30, height - 5);
+	}
+
+	
+	showAll(){
+		this.showWave();
+		this.showPoints();
+		this.showHpbar();
+	}
 }
 
 //Asteroide 
@@ -173,7 +221,7 @@ class Shootspeedbonus {
 	
 			if (c <= 20) {
 				character.setShootspeed(-0.0002)
-				character.upgrade += 1
+				character.upgradeLevel += 1
 				shootSpeedbonus = undefined
 			}		
 		
@@ -215,21 +263,21 @@ class Shoot {
 //Personagem
 class Character {
 	constructor() {
-		this.life = 100;
-		this.shootingSpeed = 2.5;
 		this.x = width / 2;
 		this.y = height - 60;
-		this.speed = 7;
 		this.diameter = 25;
 		this.points = 0;
-		this.upgrade = 1
+		this.hp = 100;
+		this.speed = 7;
+		this.shootingSpeed = 2.5;
+		this.upgradeLevel = 1
 	}
 
 	move() {
 		//Controles
 		//cima
 		if (keyIsDown(87) && this.y > 200) {
-			this.y -= this.speed / 1.5;
+			this.y -= this.speed / (canvasSize-character.y)/0.1;
 		}
 		//baixo
 		else if (keyIsDown(83) && this.y < canvasSize - 20) {
@@ -253,7 +301,7 @@ class Character {
 			// shoot.push(new Shoot(-8,5));//Cria um tiro e o insere no array de tiros. O valor apos o Shoot referece ao aliamento
 			// shoot.push(new Shoot(+6,5))
 
-			for (i= 0; i < character.upgrade; i++){
+			for (i= 0; i < character.upgradeLevel; i++){
 				shoot.push(new Shoot(-8 - (i*8),5 + (i*15),-1))
 				shoot.push(new Shoot(6 + (i*8),5 + (i*15),1))
 			}
@@ -269,7 +317,8 @@ class Character {
 	}
 
 	setLife(x) {
-		this.life += x;
+		if (x < 0 || this.hp < 100)
+		this.hp += x;
 	}
 
 	setPoints(x) {
@@ -300,7 +349,7 @@ function objcsUpdate() {
 		}
 	}
 
-	if (character.life <= 0){
+	if (character.hp <= 0){
 		character.die()
 	}
 
@@ -355,30 +404,6 @@ function objcsUpdate() {
 		shootSpeedbonus.move();
 		shootSpeedbonus.display();
 	}
-
-	//HUD
-	hudColor = "#39ff14"
-	fill(hudColor);
-	textSize(14);
-
-	fill(hudColor);
-	text("Pontos: " + character.points, width / 2 - 30, height - 15);
-
-	fill(hudColor);
-	text("Onda: "+ wave, width - 70, 15);
-
-	
-	fill(80);
-	rect(30, height - 17, 100, 15)
-	fill(hudColor)
-	rect(30, height - 17, character.life, 15)
-	textSize(12);
-	fill(255);
-	text("HP: ", 30, height - 20);
-	fill(0)
-	text(character.life + "%", 30, height - 5);
-
-
 	//Sistema de Colisões JOGADOR-IMIGO
 
 	for (i = 0; i < enemmys.length; i++) {
