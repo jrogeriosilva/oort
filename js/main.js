@@ -10,7 +10,7 @@ var y2 = canvasSize;
 var bgImg;
 var y1 = 0;
 var y2;
-var scrollSpeed = 0.0005;
+var scrollSpeed = 0.05;
 var wave = 0;
 var explosion;
 
@@ -47,8 +47,8 @@ function showBg() {
 	image(bgImg, 0, -y1, canvasSize, canvasSize);
 	image(bgImg, 0, -y2, canvasSize, canvasSize);
 
-	y1 -= scrollSpeed * canvasSize
-	y2 -= scrollSpeed * canvasSize
+	y1 -= scrollSpeed * (canvasSize - character.y)
+	y2 -= scrollSpeed * (canvasSize - character.y)
 
 	if (y1 < -canvasSize) {
 		y1 = canvasSize;
@@ -85,15 +85,16 @@ function draw() {
 class AsteroidN1 {
 	constructor() {
 		this.x = random(width);
-		this.y = random(0, 1);
-		this.diameter = random(15, 80);
-		this.speed = random(150, 180) / this.diameter;
+		this.y = random(-10, -250);
+		this.diameter = random(18, 90);
+		this.vSpeed = character.y / 100;
+		this.speed = random(1, 3) / this.diameter;
 		this.direction = random(-1, 1)
 	}
 
 	move() {
-		this.y += this.speed
-		this.x += this.direction
+		this.y += (this.speed) * (canvasSize - character.y)
+		this.x += this.direction / 2
 	}
 
 	display() {
@@ -215,7 +216,7 @@ class Shoot {
 class Character {
 	constructor() {
 		this.life = 100;
-		this.shootingSpeed = 5.5;
+		this.shootingSpeed = 2.5;
 		this.x = width / 2;
 		this.y = height - 60;
 		this.speed = 7;
@@ -228,16 +229,16 @@ class Character {
 		//Controles
 		//cima
 		if (keyIsDown(87) && this.y > 200) {
-			this.y -= this.speed;
+			this.y -= this.speed / 1.5;
 		}
 		//baixo
 		else if (keyIsDown(83) && this.y < canvasSize - 20) {
 			this.y += this.speed;
 		}
 		//desaceleração passiva
-		// else if(this.y<canvasSize -50){
-		// 	this.y += 1;
-		// }
+		else if(this.y<canvasSize -50){
+			this.y += 1;
+		}
 		//esquerda
 		if (keyIsDown(65) && this.x > 20) {
 			this.x -= this.speed;
