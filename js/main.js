@@ -12,11 +12,10 @@ var y1 = 0;
 var y2;
 var scrollSpeed = 0.006;
 var wave = 0;
-var explosion;
+var explosion = [];
 var frame = 0
 
-var explosionFrame = 0
-
+var explosionImg = [];
 
 //Bonus
 var lifeBonus;
@@ -68,16 +67,17 @@ function showBg() {
 
 //Carreganto das Imagens
 function preload() {
+	laserSound = loadSound("assets/sounds/laser1.mp3");
 	characterImg = loadImage("assets/spaceship_small_blue.png");
 	bgImg = loadImage("assets/bg.png");
 	asteroidImg = loadImage("assets/asteroid.png");
 	// plasma = loadImage("assets/plasma.png");
 
-	for(i = 00; i < 90; i++){
-		explosionImg[i] = loadImage("assets/explosion/explosion0"+ i +".png");
+	for(i = 0; i < 90; i++){
+		explosionImg[i] = loadImage("assets/explosion/explo"+ i +".png");
 	}
 //Sons
-	laserSound = loadSound("assets/sounds/laser1.mp3");
+	
 }
 
 //Configuração
@@ -96,8 +96,9 @@ function draw() {
 	hud.update();
 	hud.showAll();
 	objcsUpdate();
-	if (typeof explosion !== 'undefined'){
-		updateExplosion()
+	if (explosion.length > 0){
+		for (i = 0; i < explosion.length; i++)
+		explosion[i].updateExplosion()
 	}
 	frame++
 }
@@ -182,15 +183,18 @@ class Explosion {
 		this.x = x;
 		this.y = y;
 		this.diameter = diameter
+		this.explosionFrame = 0
 	}
 
 	updateExplosion(){
 		
-		if (frame >= 2){
-			image(explosionImg[explosionFrame],this.x, this.y, this.diameter * 2, this.diameter * 2)
-			explosionFrame++
-			Frame = 0
-		}
+			image(explosionImg[this.explosionFrame],this.x, this.y, this.diameter * 2, this.diameter * 2)
+			this.explosionFrame++
+			if (this.explosionFrame >= explosionImg.length){
+				explosion.splice(i, 1);
+				i--;
+			}
+
 
 	}
 }
@@ -226,6 +230,9 @@ class Lifebonus {
 	
 			if (c <= 20) {
 				character.setLife(10)
+				if (character.life > 100){
+					character.life = 100
+				}
 				lifeBonus = undefined
 			}		
 		
@@ -360,7 +367,7 @@ class Character {
 
 	setLife(x) {
 		if (x < 0 || this.hp < 100)
-		this.hp += x;
+		this.hp += Math.round(x);
 	}
 
 	setPoints(x) {
@@ -372,6 +379,9 @@ class Character {
 	}
 
 	die(){
+
+		// explosion.push(new Explosion(character.x, character.y, 50,50))
+
 		document.location.reload()
 	}
 
@@ -456,9 +466,14 @@ function objcsUpdate() {
 		surface = character.diameter + enemmys[i].diameter;
 		if (c <= surface / 2) {
 			console.log("Dano sofrido");
-			character.setLife(-3)
+			character.setLife(- enemmys[i].speed * enemmys[i].diameter * 12)
 			if ( enemmys[i].y + enemmys[i].diameter > character.y){
-				character.y += 10
+				character.y += enemmys[i].speed * enemmys[i].diameter * 12
+
+				explosion.push(new Explosion(enemmys[i].x, enemmys[i].y, enemmys[i].diameter))
+		
+				enemmys.splice(i, 1);
+				i--;
 			}
 		}
 	}
@@ -473,8 +488,8 @@ function objcsUpdate() {
 		else if (random(1,100) <= 80 && laserSpeedbonus == undefined){
 			laserSpeedbonus = new Laserspeedbonus(enemmys[j].x,enemmys[j].y);
 		}
-		image(explosion,enemmys[j].x, enemmys[j].y, enemmys[j].diameter * 2, enemmys[j].diameter * 2)
-
+		explosion.push(new Explosion(enemmys[j].x, enemmys[j].y, enemmys[j].diameter))
+		
 		character.setPoints(100);
 		enemmys.splice(j, 1);
 		j--;
