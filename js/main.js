@@ -10,23 +10,28 @@ var y2 = canvasSize;
 var bgImg;
 var y1 = 0;
 var y2;
-var scrollSpeed = 0.008;
+var scrollSpeed = 0.006;
 var wave = 0;
 var explosion;
+var frame = 0
+
+var explosionFrame = 0
 
 
 //Bonus
 var lifeBonus;
-var shootSpeedbonus
+var laserSpeedbonus
 
 //Personagem
 var character;
 var characterImg;
+var cannon = 0
 
 var hud;
 
 //Tiros
-var shoot = new Array(); //Array de Objetos que Grava os Tiros
+var laserSound;
+var laser = new Array(); //Array de Objetos que Grava os Tiros
 delayShot = false;
 
 //Recarga de tiros
@@ -45,6 +50,7 @@ var enemmys = new Array(); //Array de Objetos que Grava Estado e Posição dos I
 
 //Efeito do Background
 function showBg() {
+	
 	imageMode(CORNER);
 	image(bgImg, 0, -y1, canvasSize, canvasSize);
 	image(bgImg, 0, -y2, canvasSize, canvasSize);
@@ -65,8 +71,13 @@ function preload() {
 	characterImg = loadImage("assets/spaceship_small_blue.png");
 	bgImg = loadImage("assets/bg.png");
 	asteroidImg = loadImage("assets/asteroid.png");
+	// plasma = loadImage("assets/plasma.png");
 
-	explosion = loadImage("assets/explosion.gif");
+	for(i = 00; i < 90; i++){
+		explosionImg[i] = loadImage("assets/explosion/explosion0"+ i +".png");
+	}
+//Sons
+	laserSound = loadSound("assets/sounds/laser1.mp3");
 }
 
 //Configuração
@@ -85,12 +96,15 @@ function draw() {
 	hud.update();
 	hud.showAll();
 	objcsUpdate();
+	if (typeof explosion !== 'undefined'){
+		updateExplosion()
+	}
+	frame++
 }
 //HUD
 class Hud{
 	constructor(){
-		this.color = "#39ff14"
-		this.black = 80
+		this.color = "#42a1f4"
 	}
 
 	update(){
@@ -105,10 +119,16 @@ class Hud{
 		text("Onda: "+ this.wave, width - 70, 15);
 	}
 
+	showWeapon(){
+		fill(this.color);
+		textSize(14);
+		text("Gatling Laser LV "+ character.weaponLv, width - 150, height - 10);
+	}
+
 	showPoints(){
 		fill(this.color);
 		textSize(14);
-		text("Pontos: " + this.points, width / 2 - 30, height - 15);
+		text("Pontos: " + this.points, width / 2 - 30, 15);
 	}
 
 	showHpbar(){
@@ -120,12 +140,14 @@ class Hud{
 		fill(0)
 		text(this.hp + "%", 30, height - 5);
 	}
+	
 
 	
 	showAll(){
 		this.showWave();
 		this.showPoints();
 		this.showHpbar();
+		this.showWeapon();
 	}
 }
 
@@ -141,7 +163,7 @@ class AsteroidN1 {
 	}
 
 	move() {
-		this.y += (this.speed) * (canvasSize - character.y)
+		this.y += (this.speed) * (canvasSize - character.y) + wave/100
 		this.x += this.direction / 2
 	}
 
@@ -152,14 +174,34 @@ class AsteroidN1 {
 	}
 
 }
+
+
+//Explosão
+class Explosion {
+	constructor(x,y,diameter) {
+		this.x = x;
+		this.y = y;
+		this.diameter = diameter
+	}
+
+	updateExplosion(){
+		
+		if (frame >= 2){
+			image(explosionImg[explosionFrame],this.x, this.y, this.diameter * 2, this.diameter * 2)
+			explosionFrame++
+			Frame = 0
+		}
+
+	}
+}
+
 //BONUS
 //Vida Bonus
 class Lifebonus {
 	constructor(x,y) {
 		this.x = x
 		this.y = y
-		this.vSpeed = character.y / 100;
-		this.speed = 0.008
+		this.speed = 0.003
 	}
 
 	
@@ -191,12 +233,11 @@ class Lifebonus {
 
 }
 
-class Shootspeedbonus {
+class Laserspeedbonus {
 	constructor(x,y) {
 		this.x = x
 		this.y = y
-		this.vSpeed = character.y / 100;
-		this.speed = 0.008
+		this.speed = 0.003
 	}
 
 	
@@ -220,9 +261,9 @@ class Shootspeedbonus {
 			var c = Math.sqrt((a * a) + (b * b));
 	
 			if (c <= 20) {
-				character.setShootspeed(-0.0002)
-				character.upgradeLevel += 1
-				shootSpeedbonus = undefined
+				character.laserSpeed -= 0.01
+				character.weaponLv += 
+				laserSpeedbonus = undefined
 			}		
 		
 	}
@@ -231,30 +272,28 @@ class Shootspeedbonus {
 
 
 //Tiro
-class Shoot {
-	constructor(x,y, d) {
-		this.d = d
-		this.x = character.x + x;
-		this.y = character.y - 20 + y;
+class Laser {
+	constructor(x) {
+		this.x = character.x + x
+		this.y = character.y - 15;
 		this.diameter = 10;
 		this.speed = 4	;
-		this.shootColor = "#00FFFF"
+		this.laserColor = "#00FFFF"
 
 		noStroke()
-		fill(this.shootColor);
-		ellipse(this.x, this.y, 8, 8);
+		fill(this.laserColor);
+		ellipse(this.x, this.y, 15,15);
 
-
+		laserSound.play();
 	}
 
 	move() {
 		this.y -= this.speed
-		this.x += this.y  / (400 * this.d)
 	}
 
 	display() {
 		noStroke()
-		fill(this.shootColor);
+		fill(this.laserColor);
 		rect(this.x, this.y, 2, this.diameter);
 	}
 
@@ -268,9 +307,9 @@ class Character {
 		this.diameter = 25;
 		this.points = 0;
 		this.hp = 100;
-		this.speed = 7;
-		this.shootingSpeed = 2.5;
-		this.upgradeLevel = 1
+		this.speed = 5;
+		this.laserSpeed = 3;
+		this.weaponLv = 1
 	}
 
 	move() {
@@ -295,20 +334,23 @@ class Character {
 		else if (keyIsDown(68) && this.x < canvasSize - 20) {
 			this.x += this.speed;
 		}
-
+		
 		//Tiro simples
-		if (keyIsDown(32) && delayShot === false) {
-			// shoot.push(new Shoot(-8,5));//Cria um tiro e o insere no array de tiros. O valor apos o Shoot referece ao aliamento
-			// shoot.push(new Shoot(+6,5))
-
-			for (i= 0; i < character.upgradeLevel; i++){
-				shoot.push(new Shoot(-8 - (i*8),5 + (i*15),-1))
-				shoot.push(new Shoot(6 + (i*8),5 + (i*15),1))
-			}
-
+		if (keyIsDown(32) && delayShot === false && cannon == 0) {
+			laser.push(new Laser(-6))
+			cannon = 1
 			delayShot = true;
-			Delay(character.shootingSpeed);
+			Delay(character.laserSpeed);
 		}
+
+		if (keyIsDown(32) && delayShot === false && cannon == 1) {
+			laser.push(new Laser(+5))
+
+			cannon = 0
+			delayShot = true;
+			Delay(character.laserSpeed);
+		}
+
 	}
 
 	display() {
@@ -325,8 +367,8 @@ class Character {
 		this.points += x;
 	}
 
-	setShootspeed(x) {
-		this.shootingSpeed += x;
+	setLaserspeed(x) {
+		this.laserSpeed += x;
 	}
 
 	die(){
@@ -354,14 +396,14 @@ function objcsUpdate() {
 	}
 
 	//---Tiro
-	if (shoot.length > 0) {
-		for (i = 0; i < shoot.length; i++) {
-			shoot[i].move();
-			shoot[i].display();
+	if (laser.length > 0) {
+		for (i = 0; i < laser.length; i++) {
+			laser[i].move();
+			laser[i].display();
 
 			//Verificar se o Tiro Saiu da Tela e o apaga do Array de objetos
-			if (shoot[i].y < 0) {
-				shoot.splice(i, 1);
+			if (laser[i].y < 0) {
+				laser.splice(i, 1);
 				i--;
 			}
 
@@ -400,9 +442,9 @@ function objcsUpdate() {
 		lifeBonus.display();
 	}
 
-	if (typeof shootSpeedbonus !== 'undefined') {
-		shootSpeedbonus.move();
-		shootSpeedbonus.display();
+	if (typeof laserSpeedbonus !== 'undefined') {
+		laserSpeedbonus.move();
+		laserSpeedbonus.display();
 	}
 	//Sistema de Colisões JOGADOR-IMIGO
 
@@ -428,27 +470,27 @@ function objcsUpdate() {
 		if (random(1,100) <= 20 && lifeBonus == undefined) {
 			lifeBonus = new Lifebonus(enemmys[j].x,enemmys[j].y);
 		}
-		else if (random(1,100) <= 80 && shootSpeedbonus == undefined){
-			shootSpeedbonus = new Shootspeedbonus(enemmys[j].x,enemmys[j].y);
+		else if (random(1,100) <= 80 && laserSpeedbonus == undefined){
+			laserSpeedbonus = new Laserspeedbonus(enemmys[j].x,enemmys[j].y);
 		}
 		image(explosion,enemmys[j].x, enemmys[j].y, enemmys[j].diameter * 2, enemmys[j].diameter * 2)
 
 		character.setPoints(100);
 		enemmys.splice(j, 1);
 		j--;
-		shoot.splice(i, 1);
+		laser.splice(i, 1);
 		i--;
 	}
 
-	if (enemmys.length !== 0 && shoot.length !== 0) {
-		for (i = 0; i < shoot.length; i++) {
+	if (enemmys.length !== 0 && laser.length !== 0) {
+		for (i = 0; i < laser.length; i++) {
 			for (j = 0; j < enemmys.length; j++) {
 
-				if (enemmys[j] !== undefined && shoot[i] !== undefined) {
-					var xDistance = enemmys[j].x - shoot[i].x;
-					var yDistance = enemmys[j].y - shoot[i].y;
+				if (enemmys[j] !== undefined && laser[i] !== undefined) {
+					var xDistance = enemmys[j].x - laser[i].x;
+					var yDistance = enemmys[j].y - laser[i].y;
 					var diagonalDistance = Math.sqrt((xDistance * xDistance) + (yDistance * yDistance));
-					surface = shoot[i].diameter + enemmys[j].diameter;
+					surface = laser[i].diameter + enemmys[j].diameter;
 				}
 				if (diagonalDistance <= surface / 2) {
 					destroyBoth();
@@ -470,12 +512,12 @@ function objcsUpdate() {
 	}
 
 
-	if (typeof shootSpeedbonus !== 'undefined'){
-		shootSpeedbonus.checkCollect()
+	if (typeof laserSpeedbonus !== 'undefined'){
+		laserSpeedbonus.checkCollect()
 	}
-	if (typeof shootSpeedbonus !== 'undefined') {
-		if (shootSpeedbonus.y > canvasSize){
-			shootSpeedbonus = undefined
+	if (typeof laserSpeedbonus !== 'undefined') {
+		if (laserSpeedbonus.y > canvasSize){
+			laserSpeedbonus = undefined
 		}
 	}
 
