@@ -67,6 +67,7 @@ function showBg() {
 
 //Carreganto das Imagens
 function preload() {
+	explosionSound = loadSound("assets/sounds/explosion.mp3")
 	laserSound = loadSound("assets/sounds/laser1.mp3");
 	characterImg = loadImage("assets/spaceship_small_blue.png");
 	bgImg = loadImage("assets/bg.png");
@@ -117,7 +118,7 @@ class Hud{
 	showWave(){
 		fill(this.color);
 		textSize(14);
-		text("Onda: "+ this.wave, width - 70, 15);
+		text("Dificuldade: "+ this.wave, width - 120, 15);
 	}
 
 	showWeapon(){
@@ -154,13 +155,13 @@ class Hud{
 
 //Asteroide 
 class AsteroidN1 {
-	constructor() {
-		this.x = random(width);
-		this.y = random(-10, -250);
-		this.diameter = random(18, 90);
+	constructor(xo,yo,diameter) {
+		this.x = xo
+		this.y = yo
+		this.diameter = diameter
 		this.vSpeed = character.y / 100;
-		this.speed = random(1, 3) / this.diameter;
-		this.direction = random(-1, 1)
+		this.speed = random(1, 2) / this.diameter;
+		this.direction = random(-3, 3)
 	}
 
 	move() {
@@ -223,18 +224,17 @@ class Lifebonus {
 	
 
 	checkCollect(){
-
-			var a = lifeBonus.x - character.x;
-			var b = lifeBonus.y - character.y;
-			var c = Math.sqrt((a * a) + (b * b));
-	
-			if (c <= 20) {
-				character.setLife(10)
-				if (character.life > 100){
+		
+		this.distance = dist(this.x,this.y, character.x,character.y)
+		if (this.distance <= 20) {
+			character.setLife(10)
+			if (character.life > 100){
 					character.life = 100
-				}
-				lifeBonus = undefined
-			}		
+			}
+			lifeBonus = undefined
+		}
+
+
 		
 	}
 
@@ -260,18 +260,18 @@ class Laserspeedbonus {
 	}
 
 	
-
 	checkCollect(){
 
-			var a = this.x - character.x;
-			var b = this.y - character.y;
-			var c = Math.sqrt((a * a) + (b * b));
-	
-			if (c <= 20) {
-				character.laserSpeed -= 0.01
-				character.weaponLv += 
-				laserSpeedbonus = undefined
-			}		
+		this.distance = dist(this.x,this.y, character.x,character.y)
+		if (this.distance <= 20) {
+		character.laserSpeed -= 0.2;
+		character.weaponLv += 1
+			if (character.laserSpeed < 2){
+				character.weaponLv = 10
+				character.laserSpeed = 3
+			}
+			laserSpeedbonus = undefined
+		}
 		
 	}
 
@@ -284,12 +284,13 @@ class Laser {
 		this.x = character.x + x
 		this.y = character.y - 15;
 		this.diameter = 10;
-		this.speed = 4	;
+		this.speed = 5	;
 		this.laserColor = "#00FFFF"
 
 		noStroke()
 		fill(this.laserColor);
-		ellipse(this.x, this.y, 15,15);
+		ellipse(this.x, this.y, 20,20);
+		ellipse(this.x, this.y, 10,10);
 
 		laserSound.play();
 	}
@@ -315,7 +316,7 @@ class Character {
 		this.points = 0;
 		this.hp = 100;
 		this.speed = 5;
-		this.laserSpeed = 3;
+		this.laserSpeed = 4;
 		this.weaponLv = 1
 	}
 
@@ -323,7 +324,7 @@ class Character {
 		//Controles
 		//cima
 		if (keyIsDown(87) && this.y > 200) {
-			this.y -= this.speed / (canvasSize-character.y)/0.1;
+			this.y -= this.speed / (canvasSize-character.y)*20;
 		}
 		//baixo
 		else if (keyIsDown(83) && this.y < canvasSize - 20) {
@@ -439,7 +440,10 @@ function objcsUpdate() {
 	//Passando de onda
 	else {
 		for (i = 0; i < enemmysNumber; i++) {
-			enemmys.push(new AsteroidN1());
+			xo = random(5,canvasSize)
+			yo = random(-5, -400)
+			diameter = random(10,100)
+			enemmys.push(new AsteroidN1(xo,yo,diameter));
 		}
 		enemmysNumber = enemmysNumber * 1.02
 		wave++
@@ -466,11 +470,22 @@ function objcsUpdate() {
 		surface = character.diameter + enemmys[i].diameter;
 		if (c <= surface / 2) {
 			console.log("Dano sofrido");
-			character.setLife(- enemmys[i].speed * enemmys[i].diameter * 12)
+			character.setLife(- enemmys[i].speed * enemmys[i].diameter * 8)
 			if ( enemmys[i].y + enemmys[i].diameter > character.y){
-				character.y += enemmys[i].speed * enemmys[i].diameter * 12
+				character.y += enemmys[i].speed * enemmys[i].diameter * 8
 
+
+				if (enemmys[i].diameter >= 50){
+					xo = enemmys[i].x
+					yo = enemmys[i].y
+					diameter = enemmys[i].diameter / 2
+					enemmys.push(new AsteroidN1(xo,yo,diameter))
+					enemmys.push(new AsteroidN1(xo,yo,diameter))
+				}
+				
 				explosion.push(new Explosion(enemmys[i].x, enemmys[i].y, enemmys[i].diameter))
+				explosionSound.rate(100/enemmys[i].diameter)
+				explosionSound.play();
 		
 				enemmys.splice(i, 1);
 				i--;
@@ -482,6 +497,14 @@ function objcsUpdate() {
 
 //Destroi Tiro e Asteroide ao colidirem
 	function destroyBoth(){
+		if (enemmys[j].diameter >= 50){
+			xo = enemmys[j].x
+			yo = enemmys[j].y
+			diameter = enemmys[j].diameter / 2
+			enemmys.push(new AsteroidN1(xo,yo,diameter))
+			enemmys.push(new AsteroidN1(xo,yo,diameter))
+		}
+
 		if (random(1,100) <= 20 && lifeBonus == undefined) {
 			lifeBonus = new Lifebonus(enemmys[j].x,enemmys[j].y);
 		}
@@ -490,7 +513,8 @@ function objcsUpdate() {
 		}
 		explosion.push(new Explosion(enemmys[j].x, enemmys[j].y, enemmys[j].diameter))
 		
-		character.setPoints(100);
+		
+		character.setPoints(Math.round(enemmys[j].diameter*10));
 		enemmys.splice(j, 1);
 		j--;
 		laser.splice(i, 1);
@@ -508,6 +532,8 @@ function objcsUpdate() {
 					surface = laser[i].diameter + enemmys[j].diameter;
 				}
 				if (diagonalDistance <= surface / 2) {
+					explosionSound.rate(100/enemmys[j].diameter)
+					explosionSound.play();
 					destroyBoth();
 					break
 				}
