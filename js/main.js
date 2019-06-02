@@ -206,7 +206,7 @@ class Lifebonus {
 	constructor(x,y) {
 		this.x = x
 		this.y = y
-		this.speed = 0.003
+		this.speed = 0.03
 	}
 
 	
@@ -244,7 +244,7 @@ class Laserspeedbonus {
 	constructor(x,y) {
 		this.x = x
 		this.y = y
-		this.speed = 0.003
+		this.speed = 0.03
 	}
 
 	
@@ -264,11 +264,11 @@ class Laserspeedbonus {
 
 		this.distance = dist(this.x,this.y, character.x,character.y)
 		if (this.distance <= 20) {
-		character.laserSpeed -= 0.2;
+		character.laserSpeed -= 0.1;
 		character.weaponLv += 1
-			if (character.laserSpeed < 2){
-				character.weaponLv = 10
-				character.laserSpeed = 3
+			if (character.laserSpeed < 1){
+				character.weaponLv = 40
+				character.laserSpeed = 1
 			}
 			laserSpeedbonus = undefined
 		}
@@ -316,7 +316,7 @@ class Character {
 		this.points = 0;
 		this.hp = 100;
 		this.speed = 5;
-		this.laserSpeed = 4;
+		this.laserSpeed = 5;
 		this.weaponLv = 1
 	}
 
@@ -324,7 +324,7 @@ class Character {
 		//Controles
 		//cima
 		if (keyIsDown(87) && this.y > 200) {
-			this.y -= this.speed / (canvasSize-character.y)*20;
+			this.y -= this.speed / (canvasSize-character.y)*30;
 		}
 		//baixo
 		else if (keyIsDown(83) && this.y < canvasSize - 20) {
@@ -332,7 +332,7 @@ class Character {
 		}
 		//desaceleração passiva
 		else if(this.y<canvasSize -50){
-			this.y += 1;
+			this.y += 0.2;
 		}
 		//esquerda
 		if (keyIsDown(65) && this.x > 20) {
@@ -442,7 +442,7 @@ function objcsUpdate() {
 		for (i = 0; i < enemmysNumber; i++) {
 			xo = random(5,canvasSize)
 			yo = random(-5, -400)
-			diameter = random(10,100)
+			diameter = random(30,110)
 			enemmys.push(new AsteroidN1(xo,yo,diameter));
 		}
 		enemmysNumber = enemmysNumber * 1.02
@@ -501,6 +501,7 @@ function objcsUpdate() {
 			xo = enemmys[j].x
 			yo = enemmys[j].y
 			diameter = enemmys[j].diameter / 2
+			enemmys.push(new AsteroidN1(xo,yo,diameter))
 			enemmys.push(new AsteroidN1(xo,yo,diameter))
 			enemmys.push(new AsteroidN1(xo,yo,diameter))
 		}
