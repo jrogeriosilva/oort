@@ -382,11 +382,11 @@ class Character {
 	move() {
 		//Controles
 		//cima
-		if (keyIsDown(87) && this.y > 200) {
+		if ((keyIsDown(87) || keyIsDown(UP_ARROW)) && this.y > 200) {
 			this.y -= this.speed / (canvasSize-character.y)*30;
 		}
 		//baixo
-		else if (keyIsDown(83) && this.y < canvasSize - 20) {
+		else if ((keyIsDown(83) || keyIsDown(DOWN_ARROW)) && this.y < canvasSize - 50) {
 			this.y += this.speed;
 		}
 		//desaceleração passiva
@@ -394,16 +394,16 @@ class Character {
 			this.y += 0.2;
 		}
 		//esquerda
-		if (keyIsDown(65) && this.x > 20) {
+		if ((keyIsDown(65) || keyIsDown(LEFT_ARROW)) && this.x > 20) {
 			this.x -= this.speed;
 		}
 		//direita
-		else if (keyIsDown(68) && this.x < canvasSize - 20) {
+		else if ((keyIsDown(68) || keyIsDown(RIGHT_ARROW)) && this.x < canvasSize - 20) {
 			this.x += this.speed;
 		}
 		
 		//Tiro simples
-		if (keyIsDown(32) && delayShot === false && cannon == 0) {
+		if ((keyIsDown(32) ) && delayShot === false && cannon == 0) {
 			laser.push(new Laser(-6))
 			cannon = 1
 			delayShot = true;
