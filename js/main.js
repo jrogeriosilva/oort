@@ -4,6 +4,11 @@
     Etapa 2
 */
 
+//Telas
+
+var mainMenu
+var gameOver
+
 //Cenário
 var canvasSize = 512;
 var y2 = canvasSize;
@@ -88,20 +93,48 @@ function setup() {
 	//Criando Personagem
 	character = new Character();
 	hud = new Hud();
+	tela = 1
 }
 
 function draw() {
-	clear();
 	background(0)
-	showBg();
-	hud.update();
-	hud.showAll();
-	objcsUpdate();
-	if (explosion.length > 0){
-		for (i = 0; i < explosion.length; i++)
-		explosion[i].updateExplosion()
+	
+	//TELA DE INICIO
+	if (tela == 1){
+		fill(255);
+		textSize(13);
+		text("Pressione [ENTER] para Iniciar" ,width/2 -100, height/2 );
+		if (keyIsDown(13)){
+			tela = 2
+		}
 	}
-	frame++
+
+	//TELA DO JOGO
+	if (tela == 2){
+		clear();
+		background(0)
+		showBg();
+		hud.update();
+		hud.showAll();
+		objcsUpdate();
+		if (explosion.length > 0){
+			for (i = 0; i < explosion.length; i++)
+			explosion[i].updateExplosion()
+		}
+		frame++
+	}
+
+	//TELA DE GAME OVER
+	if (tela == 3){
+		fill(255);
+		textSize(25);
+		text("GAME OVER" ,width/2 -70, height/2 - 20);
+		textSize(14);
+		text("Pressione [ENTER] para Re-iniciar" ,width/2 -100, height/2 );
+		if (keyIsDown(13)){
+			document.location.reload()
+		}
+	}
 }
 //HUD
 class Hud{
@@ -113,6 +146,7 @@ class Hud{
 		this.points = character.points
 		this.hp = character.hp
 		this.wave = wave
+		this.heat = character.heat
 	}
 
 	showWave(){
@@ -143,6 +177,13 @@ class Hud{
 		text(this.hp + "%", 30, height - 5);
 	}
 	
+	showHeatbar(){
+		fill(this.color)
+		rect(10, height -20 , 10, (this.heat*-1)*5)
+		textSize(12);
+		fill(255);
+		fill(0)
+	}
 
 	
 	showAll(){
@@ -150,6 +191,22 @@ class Hud{
 		this.showPoints();
 		this.showHpbar();
 		this.showWeapon();
+		this.showHeatbar()
+	}
+}
+
+class Mainmenu {
+	constructor(){
+		fill(this.color);
+		textSize(14);
+		text("Pressione Espaço para Começar: ", width/2, height/2);
+	}
+
+}
+
+class Gameover {
+	constructor(){
+
 	}
 }
 
@@ -281,12 +338,13 @@ class Laserspeedbonus {
 //Tiro
 class Laser {
 	constructor(x) {
+		character.heat += 1
 		this.x = character.x + x
 		this.y = character.y - 15;
 		this.diameter = 10;
 		this.speed = 5	;
 		this.laserColor = "#00FFFF"
-
+		
 		noStroke()
 		fill(this.laserColor);
 		ellipse(this.x, this.y, 20,20);
@@ -318,6 +376,7 @@ class Character {
 		this.speed = 5;
 		this.laserSpeed = 5;
 		this.weaponLv = 1
+		this.heat = 0
 	}
 
 	move() {
@@ -362,6 +421,9 @@ class Character {
 	}
 
 	display() {
+		if (this.heat > 0){
+			this.heat -= 0.1
+		}
 		imageMode(CENTER);
 		image(characterImg, character.x, character.y);
 	}
@@ -383,7 +445,7 @@ class Character {
 
 		// explosion.push(new Explosion(character.x, character.y, 50,50))
 
-		document.location.reload()
+		tela = 3
 	}
 
 }
