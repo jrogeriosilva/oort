@@ -128,9 +128,12 @@ function draw() {
 	if (tela == 3){
 		fill(255);
 		textSize(25);
-		text("GAME OVER" ,width/2 -70, height/2 - 20);
+		text("GAME OVER" ,width/2 -70, height/2 - 70);
+		textSize(20);
+		text("Você fez: " + character.points + "  pontos" , 170, height/2 - 20);
 		textSize(14);
 		text("Pressione [ENTER] para Re-iniciar" ,width/2 -100, height/2 );
+
 		if (keyIsDown(13)){
 			document.location.reload()
 		}
@@ -164,7 +167,7 @@ class Hud{
 	showPoints(){
 		fill(this.color);
 		textSize(14);
-		text("Pontos: " + this.points, width / 2 - 30, 15);
+		text("Pontos: " + Math.round( this.points), width / 2 - 30, 15);
 	}
 
 	showHpbar(){
@@ -285,7 +288,7 @@ class Lifebonus {
 		this.distance = dist(this.x,this.y, character.x,character.y)
 		if (this.distance <= 20) {
 			character.setLife(10)
-			if (character.life > 100){
+			if (character.life >= 100){
 					character.life = 100
 			}
 			lifeBonus = undefined
@@ -383,7 +386,7 @@ class Character {
 		//Controles
 		//cima
 		if ((keyIsDown(87) || keyIsDown(UP_ARROW)) && this.y > 200) {
-			this.y -= this.speed / (canvasSize-character.y)*30;
+			this.y -= this.speed / (canvasSize-character.y)*70;
 		}
 		//baixo
 		else if ((keyIsDown(83) || keyIsDown(DOWN_ARROW)) && this.y < canvasSize - 50) {
@@ -416,6 +419,10 @@ class Character {
 			cannon = 0
 			delayShot = true;
 			Delay(character.laserSpeed);
+		}
+
+		if (character.y > canvasSize - 40){
+			character.y -= 10
 		}
 
 	}
@@ -509,7 +516,7 @@ function objcsUpdate() {
 		}
 		enemmysNumber = enemmysNumber * 1.02
 		wave++
-		character.setPoints(wave*50)
+		character.setPoints(Math.round(wave*(canvasSize - character.y)))
 	}
 
 	//Atualizando Posição dos Bonus
@@ -577,7 +584,7 @@ function objcsUpdate() {
 		explosion.push(new Explosion(enemmys[j].x, enemmys[j].y, enemmys[j].diameter))
 		
 		
-		character.setPoints(Math.round(enemmys[j].diameter*10));
+		character.setPoints(enemmys[j].diameter) * (canvasSize - character.y) * 20;
 		enemmys.splice(j, 1);
 		j--;
 		laser.splice(i, 1);
