@@ -130,7 +130,7 @@ function draw() {
 		textSize(25);
 		text("GAME OVER" ,width/2 -70, height/2 - 70);
 		textSize(20);
-		text("Você fez: " + character.points + "  pontos" , 170, height/2 - 20);
+		text("Você fez: " + Math.round(character.points) + "  pontos" , 170, height/2 - 20);
 		textSize(14);
 		text("Pressione [ENTER] para Re-iniciar" ,width/2 -100, height/2 );
 
