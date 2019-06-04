@@ -225,7 +225,7 @@ class AsteroidN1 {
 	}
 
 	move() {
-		this.y += (this.speed) * (canvasSize - character.y) + wave/100
+		this.y += (this.speed) * ((canvasSize - character.y)/2) + wave/50
 		this.x += this.direction / 2
 	}
 
@@ -438,6 +438,9 @@ class Character {
 	setLife(x) {
 		if (x < 0 || this.hp < 100)
 		this.hp += Math.round(x);
+		if (this.hp > 100){
+			this.hp = 100
+		}
 	}
 
 	setPoints(x) {
