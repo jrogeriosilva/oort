@@ -234,7 +234,6 @@ class AsteroidN1 {
 	}
 
 	display() {
-		imageMode(CENTER);
 		image(asteroidImg, this.x, this.y, this.diameter, this.diameter);
 
 	}
@@ -290,7 +289,7 @@ class Lifebonus {
 	checkCollect(){
 		
 		this.distance = dist(this.x,this.y, character.x,character.y)
-		if (this.distance <= 20) {
+		if (this.distance <= 25) {
 			character.setLife(10)
 			if (character.life >= 100){
 					character.life = 100
@@ -327,7 +326,7 @@ class Laserspeedbonus {
 	checkCollect(){
 
 		this.distance = dist(this.x,this.y, character.x,character.y)
-		if (this.distance <= 20) {
+		if (this.distance <= 25) {
 		character.laserSpeed -= 0.1;
 		character.weaponLv += 1
 			if (character.laserSpeed < 1){
@@ -542,14 +541,13 @@ function objcsUpdate() {
 		var a = enemmys[i].x - character.x;
 		var b = enemmys[i].y - character.y;
 		var c = Math.sqrt((a * a) + (b * b));
-
+		distance = dist(character.x,character.y, enemmys[i].x,enemmys[i].y)
 		surface = character.diameter + enemmys[i].diameter;
-		if (c <= surface / 2) {
+		if (distance <= surface/2) {
 			console.log("Dano sofrido");
 			character.setLife(- enemmys[i].speed * enemmys[i].diameter * 8)
 			if ( enemmys[i].y + enemmys[i].diameter > character.y){
 				character.y += enemmys[i].speed * enemmys[i].diameter * 8
-
 
 				if (enemmys[i].diameter >= 50){
 					xo = enemmys[i].x
