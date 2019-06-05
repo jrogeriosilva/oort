@@ -102,8 +102,12 @@ function draw() {
 	//TELA DE INICIO
 	if (tela == 1){
 		fill(255);
+		textAlign(CENTER)
+		textSize(40);
+		text("Oort" ,width/2, height/2 - 100);
 		textSize(13);
-		text("Pressione [ENTER] para Iniciar" ,width/2 -100, height/2 );
+		text("Pressione [ENTER] para Iniciar" ,width/2, height/2 );
+		textAlign(LEFT)
 		if (keyIsDown(13)){
 			tela = 2
 		}
