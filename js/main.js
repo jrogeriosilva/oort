@@ -77,6 +77,7 @@ function preload() {
 	characterImg = loadImage("assets/spaceship_small_blue.png");
 	bgImg = loadImage("assets/bg.png");
 	asteroidImg = loadImage("assets/asteroid.png");
+	tela1 = loadImage("assets/tela1.png");
 	// plasma = loadImage("assets/plasma.png");
 
 	for(i = 0; i < 90; i++){
@@ -101,10 +102,12 @@ function draw() {
 	
 	//TELA DE INICIO
 	if (tela == 1){
+		imageMode(CENTER)
+		image(tela1, width/2, height/2, canvasSize,canvasSize)
 		fill(255);
 		textAlign(CENTER)
 		textSize(40);
-		text("Oort" ,width/2, height/2 - 100);
+		text("Nuvem de Oort" ,width/2, height/2 - 150);
 		textSize(13);
 		text("Pressione [ENTER] para Iniciar" ,width/2, height/2 );
 		textAlign(LEFT)
@@ -520,7 +523,7 @@ function objcsUpdate() {
 			diameter = random(30,110)
 			enemmys.push(new AsteroidN1(xo,yo,diameter));
 		}
-		enemmysNumber = enemmysNumber * 1.02
+		enemmysNumber = enemmysNumber * 1.1
 		wave++
 		character.setPoints(Math.round(wave*(canvasSize - character.y)))
 	}
