@@ -72,12 +72,17 @@ function showBg() {
 
 //Carreganto das Imagens
 function preload() {
+	pixelminers = loadFont('assets/pixelminers.otf');
 	explosionSound = loadSound("assets/sounds/explosion.mp3")
 	laserSound = loadSound("assets/sounds/laser1.mp3");
+	startSound = loadSound("assets/sounds/start.mp3");
+
 	characterImg = loadImage("assets/spaceship_small_blue.png");
 	bgImg = loadImage("assets/bg.png");
 	asteroidImg = loadImage("assets/asteroid.png");
 	tela1 = loadImage("assets/tela1.png");
+	tela3 = loadImage("assets/tela3.jpg");
+	painel = loadImage("assets/painel.png");
 	// plasma = loadImage("assets/plasma.png");
 
 	for(i = 0; i < 90; i++){
@@ -98,8 +103,10 @@ function setup() {
 }
 
 function draw() {
+	textFont(pixelminers)
 	background(0)
-	
+	frame++
+
 	//TELA DE INICIO
 	if (tela == 1){
 		imageMode(CENTER)
@@ -107,11 +114,17 @@ function draw() {
 		fill(255);
 		textAlign(CENTER)
 		textSize(40);
-		text("Nuvem de Oort" ,width/2, height/2 - 150);
+		text("Nuvem de Oort" ,width/2, height/2 -1);
 		textSize(13);
-		text("Pressione [ENTER] para Iniciar" ,width/2, height/2 );
-		textAlign(LEFT)
+		if ( frame > 15){
+			text("Pressione [ENTER] para Iniciar" ,width/2, height/2 + 70 );
+			if (frame > 70){
+				frame = 0
+			}
+		}
 		if (keyIsDown(13)){
+			
+			startSound.play();
 			tela = 2
 		}
 	}
@@ -128,18 +141,26 @@ function draw() {
 			for (i = 0; i < explosion.length; i++)
 			explosion[i].updateExplosion()
 		}
-		frame++
 	}
 
 	//TELA DE GAME OVER
 	if (tela == 3){
+		imageMode(CENTER)
+		image(tela3, width/2, height/2, canvasSize,canvasSize) 	
 		fill(255);
+		textAlign(CENTER)
 		textSize(25);
-		text("GAME OVER" ,width/2 -70, height/2 - 70);
+		text("GAME OVER" ,width/2, height/2 - 70);
 		textSize(20);
-		text("Você fez: " + Math.round(character.points) + "  pontos" , 170, height/2 - 20);
+		text("Pontos:\n " + Math.round(character.points) , width/2, height/2 - 20);
 		textSize(14);
-		text("Pressione [ENTER] para Re-iniciar" ,width/2 -100, height/2 );
+		
+		if ( frame > 15){
+			text("Pressione [ENTER] para Re-Iniciar" ,width/2 , height/2 + 80 );
+			if (frame > 70){
+				frame = 0
+			}
+		}
 
 		if (keyIsDown(13)){
 			document.location.reload()
@@ -161,14 +182,14 @@ class Hud{
 
 	showWave(){
 		fill(this.color);
-		textSize(14);
+		textSize(10);
 		text("Dificuldade: "+ this.wave, width - 120, 15);
 	}
 
 	showWeapon(){
 		fill(this.color);
-		textSize(14);
-		text("Gatling Laser LV "+ character.weaponLv, width - 150, height - 10);
+		textSize(10);
+		text("Laser LV "+ character.weaponLv, width - 110, height - 10);
 	}
 
 	showPoints(){
@@ -184,6 +205,7 @@ class Hud{
 		fill(255);
 		text("HP: ", 30, height - 20);
 		fill(0)
+		textAlign(LEFT)
 		text(this.hp + "%", 30, height - 5);
 	}
 	
@@ -194,6 +216,11 @@ class Hud{
 		fill(255);
 		fill(0)
 	}
+	showMultiplier(){
+		fill(this.color)
+		textSize(10);
+		text("Multiplicador de pontos: "+Math.round((height - character.y) * wave )+"X", width/2-80, height-10 )
+	}
 
 	
 	showAll(){
@@ -201,15 +228,13 @@ class Hud{
 		this.showPoints();
 		this.showHpbar();
 		this.showWeapon();
-		this.showHeatbar()
+	// this.showHeatbar()
+		this.showMultiplier();
 	}
 }
 
 class Mainmenu {
 	constructor(){
-		fill(this.color);
-		textSize(14);
-		text("Pressione Espaço para Começar: ", width/2, height/2);
 	}
 
 }
@@ -232,7 +257,7 @@ class AsteroidN1 {
 	}
 
 	move() {
-		this.y += (this.speed) * ((canvasSize - character.y)/2) + wave/50
+		this.y += (this.speed) * ((canvasSize - character.y)/0.9) + wave/50
 		this.x += this.direction / 2
 	}
 
@@ -293,7 +318,7 @@ class Lifebonus {
 		
 		this.distance = dist(this.x,this.y, character.x,character.y)
 		if (this.distance <= 25) {
-			character.setLife(10)
+			character.setLife(15)
 			if (character.life >= 100){
 					character.life = 100
 			}
@@ -310,7 +335,7 @@ class Laserspeedbonus {
 	constructor(x,y) {
 		this.x = x
 		this.y = y
-		this.speed = 0.03
+		this.speed = 0.02
 	}
 
 	
@@ -321,8 +346,9 @@ class Laserspeedbonus {
 	display() {
 		fill(100,255,100)
 		ellipse(this.x, this.y, 25, 25);
+		textSize(20)
 		fill(0)
-		text("S", this.x-7, this.y+5)
+		text("+", this.x-7, this.y+5)
 	}
 
 	
@@ -383,7 +409,7 @@ class Character {
 		this.points = 0;
 		this.hp = 100;
 		this.speed = 5;
-		this.laserSpeed = 5;
+		this.laserSpeed = 4;
 		this.weaponLv = 1
 		this.heat = 0
 	}
@@ -398,10 +424,7 @@ class Character {
 		else if ((keyIsDown(83) || keyIsDown(DOWN_ARROW)) && this.y < canvasSize - 50) {
 			this.y += this.speed;
 		}
-		//desaceleração passiva
-		else if(this.y<canvasSize -50){
-			this.y += 0.2;
-		}
+
 		//esquerda
 		if ((keyIsDown(65) || keyIsDown(LEFT_ARROW)) && this.x > 20) {
 			this.x -= this.speed;
@@ -523,7 +546,7 @@ function objcsUpdate() {
 			diameter = random(30,110)
 			enemmys.push(new AsteroidN1(xo,yo,diameter));
 		}
-		enemmysNumber = enemmysNumber * 1.1
+		enemmysNumber = enemmysNumber * 1.05
 		wave++
 		character.setPoints(Math.round(wave*(canvasSize - character.y)))
 	}
@@ -592,7 +615,7 @@ function objcsUpdate() {
 		explosion.push(new Explosion(enemmys[j].x, enemmys[j].y, enemmys[j].diameter))
 		
 		
-		character.setPoints(enemmys[j].diameter) * (canvasSize - character.y) * 20;
+		character.setPoints(enemmys[j].diameter) * (canvasSize - character.y) * wave;
 		enemmys.splice(j, 1);
 		j--;
 		laser.splice(i, 1);
